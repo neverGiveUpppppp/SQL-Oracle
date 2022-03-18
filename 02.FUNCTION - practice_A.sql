@@ -68,22 +68,20 @@ LENGTH / LENGTHB
 
 
 
-SELECT LENGTH('오라클'), LENGTH('ORACLE') FROM EMPLOYEE; -- 3 6
-SELECT LENGTHB('오라클'), LENGTHB('ORACLE') FROM EMPLOYEE; -- 9 6
+
 SELECT LENGTH(EMAIL), LENGTH(EMAIL) FROM EMPLOYEE;
-SELECT LENGTHB(EMAIL),
 -- 리터럴값도 가능하지만 컬럼도 가능
 
 SELECT LENGTH(EMAIL), LENGTH(EMAIL) FROM EMPLOYEE;
 -- 이름, 이메일 -> 길이, 바이트 사이즈
 
-SELECT LENGTH(EMP_NAME),LENGTHB(EMP_NAME) FROM EMPLOYEE; -- 3 9
-SELECT LENGTH(EMP_NAME), LENGTH(EMAIL) FROM EMPLOYEE; -- 길이 3 15
-SELECT EMP_NAME, LENGTHB(EMP_NAME), LENGTHB(EMAIL) FROM EMPLOYEE; -- 길이B 9 15
+SELECT LENGTH(EMP_NAME), LENGTH(EMP_NAME) FROM EMPLOYEE; -- 길이 3
+SELECT EMP_NAME, LENGTHB(EMP_NAME), LENGTHB(EMP_NAME) FROM EMPLOYEE; -- 길이B 9
         
 SELECT EMP_NAME, LENGTH(EMP_NAME), LENGTHB(EMP_NAME),
         EMAIL, LENGTH(EMAIL), LENGTHB(EMAIL)
-FROM EMPLOYEE; -- 선동일	3	9	sun_di@kh.or.kr	15	15
+FROM EMPLOYEE;
+
 
 
 ------------------------------------------------------------------------------
@@ -102,33 +100,20 @@ FROM EMPLOYEE; -- 선동일	3	9	sun_di@kh.or.kr	15	15
  
 -- 없는 문자열은 0반환 // 만약, 제로인덱스였다면 -1반환
 -- AABAACAABBAA
-SELECT INSTR('AABAACAABBAA','A') FROM EMPLOYEE; --1
-SELECT INSTR('AABAACAABBAA','B') FROM EMPLOYEE; --3
-SELECT INSTR('AABAACAABBAA','C') FROM EMPLOYEE; --6
-SELECT INSTR('AABAACAABBAA','D') FROM EMPLOYEE; -- 0 // 없는 수는 0을 반환
-SELECT INSTR('AABAACAABBAA', 'AB') FROM EMPLOYEE; -- 2
-SELECT INSTR('AABAACAABBAA', 'AB',3) FROM EMPLOYEE; -- 8
--- 두글자 이상은 첫글자 기준으로 인덱스반환
 
-SELECT INSTR('AABAACAABBAA','B',7) FROM EMPLOYEE; -- 9
-SELECT INSTR('AABAACAABBAA','B',7,1) FROM EMPLOYEE; -- 9
+
 -- 코딩해설 : 7번쨰부터 읽기 시작해서 B가 처음 나올 때까지 읽어서, 처음 나오는 B의 위치 반환해
-
+ 
 -- 마이너스(-)는 거꾸로 읽기
 -- 역순 뒤에서 찍은 기준점 기준으로 왼쪽으로 세기
-SELECT INSTR('AABAACAABBAA','B',-10) FROM DUAL; -- 3
-SELECT INSTR('AABAACAABBAA','B',-10,1) FROM DUAL; -- 3
-SELECT INSTR('AABAACAABBAA','B',-1,2) FROM DUAL; -- 9
-SELECT INSTR('AABAACAABBAA','B',-1,3) FROM DUAL; -- 3
-SELECT INSTR('AABAACAABBAA','A',-2,5) FROM DUAL; -- 5
-SELECT INSTR('AABAACAABBAA','A',1,4) FROM DUAL; -- 5
+
 
 -- 1에서부터 두번째 있는 'B'를 찾아라
-SELECT INSTR('AABAACAABBAA','B',1,2) FROM DUAL; -- 9
+
 
 -- EMPLOYEE테이블에서 이메일의 @위치 반환
-SELECT INSTR(EMAIL,'@',1) FROM EMPLOYEE; -- 7 
-SELECT EMAIL, INSTR(EMAIL,'@') FROM EMPLOYEE; -- sun_di@kh.or.kr 7
+
+
 
 
 ------------------------------------------------------------------------------
@@ -144,19 +129,13 @@ SELECT EMAIL, INSTR(EMAIL,'@') FROM EMPLOYEE; -- sun_di@kh.or.kr 7
 
 
 --      sun_di@kh.or.kr// 세팅 :20
-SELECT LPAD(EMAIL,20) FROM EMPLOYEE; --      sun_di@kh.or.kr
 -- sun_di@kh.or.kr     //
-SELECT RPAD(EMAIL, 20) FROM EMPLOYEE;
+
 
 
 -- 값보다 지정한 총길이가 짧으면 뒤부터 짤림
-SELECT LPAD(EMAIL, 12) FROM EMPLOYEE; -- sun_di@kh.or
+
 -- 공백대신 대체할 문자 삽입
-SELECT LPAD(EMAIL, 20, '^') FROM EMPLOYEE;
-
-
-SELECT RPAD(EMAIL,20,'_'), LPAD(EMAIL,20,'_') FROM EMPLOYEE;
-SELECT LPAD(EMAIL,20,'_'), RPAD(EMAIL,20,'_') FROM EMPLOYEE;
 
 
 ------------------------------------------------------------------------------
@@ -167,40 +146,30 @@ SELECT LPAD(EMAIL,20,'_'), RPAD(EMAIL,20,'_') FROM EMPLOYEE;
 --      문자를 지정하지 않을 경우, 공백 제거
 -- LTRIM : 왼쪽부터 순서대로 제거
 -- RTRIM : 오른쪽부터 순서대로 제거
--- 지울려는 문자가 아닌 문자에 다다르면 TRIM 중지
+
 
 -- 자바 STRING클래스에서 TRIM은 공백제거 메소드
 
---    KH//KH//
-SELECT LTRIM('   KH') FROM DUAL;
---    KH//   KH// 
-SELECT RTRIM('   KH') FROM DUAL;
+-- KH//
+--    KH//
 
 -- 000123456
 -- 0만 제거하고 나머지를 반환
-SELECT LTRIM('000123456','0') FROM DUAL; -- 123456
 
 -- 0001230456
 -- 중간에 껴있는 해당 문자는 제거X
-SELECT LTRIM('0001230456','0') FROM DUAL; -- 1230456
-
 
 -- ACABACCKH // KH
-SELECT LTRIM('ACABACCKH','ABC') FROM DUAL; -- KH
 -- 'ABC' 묶여진 문자 하나로 보는게 아니라, A 또는 B 또는 C가 있으면 다 지우는 것
 -- 'ABC' 안에 순서 상관X
-SELECT RTRIM('ACABACCKH','CBA') FROM DUAL; -- ACABACCKH // -- 지울려는 문자가 아닌 문자에 다다르면 TRIM 중지
-SELECT RTRIM('ACABACCKH','ABC') FROM DUAL; -- ACABACCKH 
-SELECT LTRIM('ACABACCKH','CBA') FROM DUAL; -- KH
+
 
 -- KH   // KH
 -- 오른쪽부터 공백제거
-SELECT RTRIM('KH    ') FROM DUAL; -- KH
+
 
 -- 01230456000 // 01230456
-SELECT RTRIM('01230456000','0') FROM DUAL; -- 01230456
 -- KHACABACC // KH
-SELECT RTRIM('KHACABACC','ABC') FROM DUAL; -- KH
 -- 오른쪽부터 지우기 시작
 
 
@@ -217,24 +186,18 @@ SELECT RTRIM('KHACABACC','ABC') FROM DUAL; -- KH
 -- BOTH : 양쪽에서부터 제거
 
 --    KH   // KH // A는 별칭
-SELECT TRIM('    KH   ') A FROM DUAL; -- KH
---'ZZZKHZZZ' // KH
-SELECT TRIM('Z' FROM 'ZZZKHZZZ') FROM DUAL; -- KH
+
+--    KH   //KH
 
 
 -- ZZZKHZZZ // KH
-SELECT TRIM('Z' FROM 'ZZZKHZZZ') FROM DUAL;
 -- 123KH3123123 // error : trim set should have only one character
-SELECT TRIM('ZZ' FROM 'ZZZKHZZZ') FROM DUAL;
 -- TRIM은 제거할 문자 1개만 받는다
-
 -- ZZZKHZZZZ // KHZZZZ
 -- LEADING 앞부터 제거
-SELECT TRIM(LEADING 'Z' FROM 'ZZZKHZZZZ') FROM DUAL; -- KHZZZZ
 
 -- ZZZKHZZZZ // ZZZKH
 -- TRAILING 뒤부터 제거
-SELECT TRIM(TRAILING, 'Z' FROM 'ZZZKHZZZZ') FROM DUAL;
 
 
 -- ZZZKHZZZZ //KH
@@ -353,8 +316,7 @@ SELECT TRIM(TRAILING, 'Z' FROM 'ZZZKHZZZZ') FROM DUAL;
 
 -- 방법2
 -- RPAD+SUBSTR
-SELECT EMP_NAME, RPAD(SUBSTR(EMP_NO,1,7),14,'*')
-FROM EMPLOYEE;
+
 
 -- RPAD+SUBSTR+INSTR
 
@@ -453,40 +415,363 @@ FROM EMPLOYEE;
 
 
 
+
+
 -- 3)날짜 관련 함수
 
 -- SYSDATE
 -- 시스템에 저장되어있는 시간을 사용
 
--- 22/03/14
-
+SELECT SYSDATE FROM DUAL; -- 22/03/14
 
 
 -- MONTHS_BETWEEN
 -- 개월수의 차를 숫자로 리턴해주는 함수
 
 -- EMPLOYEE테이블에서 사원의 이름, 입사일, 근무 개월 수 조회
--- 385.283...
--- ABS 이용 같은코드
+SELECT EMP_NAME, HIRE_DATE, MONTHS_BETWEEN(SYSDATE, HIRE_DATE) FROM EMPLOYEE; -- 385.283...
+--SELECT EMP_NAME, HIRE_DATE, ABS(MONTHS_BETWEEN(HIRE_DATE, SYSDATE)) FROM EMPLOYEE; -- 같은코드
 -- 368개월차
 -- SYSDATE의 날짜에서 HIRE_DATE를 뺀 것 : SYSDATE - HIRE_DATE
 
-
--- CEIL+ABS+MONTHS_BETWEEN
--- 368개월차
+SELECT EMP_NAME, HIRE_DATE, CEIL(ABS(MONTHS_BETWEEN(HIRE_DATE, SYSDATE))) || '개월차'
+FROM EMPLOYEE; -- 368개월차
 -- 앞뒤로 뭐가 올지 모른다면 ABS를 넣어서 절대값으로 받아오면 된다
 
 
 -- ADD_MONTHS
 -- 기준 날짜에다 지정한 숫자만큼의 개월수로 더한 날짜 리턴
--- 22/07/14
+SELECT ADD_MONTHS(SYSDATE, 4) FROM DUAL; -- 22/07/14
 -- 지금부터 4개월 뒤 반환됨
-
--- 23/01/14
+SELECT ADD_MONTHS(SYSDATE, 10) FROM DUAL; -- 23/01/14
 -- 개월수가 더해져서 연도가 넘어가면 연도도 올라감
 
-
 --EMPLOYEE테이블에서 사원의 이름, 입사일, 입사 후 6개월이 된 날짜 조회
+SELECT EMP_NAME, HIRE_DATE, ADD_MONTHS(HIRE_DATE,6) FROM EMPLOYEE;
+
+
+-- NEXT_DAY
+-- 기준 날짜에서 구하려는 요일에 가장 가까운 날짜 리턴
+-- 1=일, 2=월, 3=화,4=수, 5=목, 6=금, 7=토
+-- 텍스트의 맨 앞글자만 따와서 요일 반환
+
+-- 지금 기준으로부터 가장 가까운 목요일 구하기
+SELECT SYSDATE, NEXT_DAY(SYSDATE, '목요일') FROM DUAL; -- 22/03/15	22/03/17
+SELECT SYSDATE, NEXT_DAY(SYSDATE, '목') FROM DUAL; -- 22/03/15	22/03/17
+SELECT SYSDATE, NEXT_DAY(SYSDATE, 5) FROM DUAL; -- 22/03/15	22/03/17
+-- 1=일, 2=월, 3=화,4=수, 5=목, 6=금, 7=토
+
+SELECT SYSDATE, NEXT_DAY(SYSDATE, '수박 먹고파ㅠㅠ') FROM DUAL; -- 22/03/15	22/03/16
+-- 수박먹고파가 요일은 아니지만 맨 앞글자 '수'만 따서 요일 반환하는 걸 알 수 있다
+SELECT SYSDATE, NEXT_DAY(SYSDATE, '금자탑') FROM DUAL; -- 22/03/15	22/03/18
+-- 금자탑의 맨 앞글자 '금' = 금요일
+
+
+-- 한글만 인지하게끔 설정이 되어있어 인식오류 뜨는 것
+
+-- 영어로 세팅
+ALTER SESSION SET NLS_LANGUAGE = AMERICAN; -- Session이(가) 변경되었습니다.
+SELECT SYSDATE, NEXT_DAY(SYSDATE, 'THURSDAY') FROM DUAL; -- 22/03/15	22/03/17
+SELECT SYSDATE, NEXT_DAY(SYSDATE, 'THUR') FROM DUAL; -- 22/03/15	22/03/17
+SELECT SYSDATE, NEXT_DAY(SYSDATE, 'THURSTY') FROM DUAL; -- 22/03/15	22/03/17
+SELECT SYSDATE, NEXT_DAY(SYSDATE, 'THUR--') FROM DUAL; -- 22/03/15	22/03/17
+-- 한글과 동일하게 앞글자만 맞으면 요일 반환. 아마도 첫발음의 한글자를 치는 듯
+
+-- T만쓰면 에러. THUR까지 써야 반환
+
+-- 한글로 세팅
+
+
+
+-- LAST_DAY
+-- 해당 날짜의 월의 마지막 일 반환
+
+
+
+
+-- EXTRACT
+-- 년 월, 일 정보 추출 반환
+
+-- EMPLOYEE테이블에서 사원의 이름, 입사연도, 입사월, 입사일 조회
+
+
+
+-- EMPLOYEE테이블에서 사원의 이름, 입사일, 근무년수 조회
+-- 단, 근무년수는 현재연도 - 입사연도로 조회
+
+
+
+
+
+
+----------실습문제------------
+--1.EMPLOYEE테이블에서 사원명, 입사일-오늘, 오늘-입사일 조회
+-- 단, 별칭은 근무일수1, 근무일수2로 하고 모두 정수처리(내림)와 양수로 처리
+--2.EMPLOYEE테이블에서 사번이 홀수인 직원들의 정보 모두 조회
+--3.EMPLOYEE테이블에서 근무년수가 20년 이상인 직원 전체 정보 조회
+--4.EMPLOYEE테이블에서 사원명, 입사일, 입사한 달의 근무일수 조회
+
+
+--1.EMPLOYEE테이블에서 사원명, 입사일-오늘, 오늘-입사일 조회
+-- 단, 별칭은 근무일수1, 근무일수2로 하고 모두 정수처리(내림)와 양수로 처리
+-- 절삭이 아니라 내림이라 FLOOR. TRUNC는 절삭이고 FLOOR는 수학적 내림
+
+
+--2.EMPLOYEE테이블에서 사번이 홀수인 직원들의 정보 모두 조회
+
+-- 오라클에서는 % 나머지 연산지 지원X
+
+
+--3.EMPLOYEE테이블에서 근무년수가 20년 이상인 직원 전체 정보 조회
+-- 방법1
+
+-- 방법2
+
+-- 방법3
+
+-- 방법4
+
+-- 방법5
+
+ 
+--4.EMPLOYEE테이블에서 사원명, 입사일, 입사한 달의 근무일수 조회
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
+
+-- 4)형변환 함수
+-- A) TO_CHAR
+-- B) TO_DATE
+-- C) TO_NUMBER
+
+-- A) TO_CHAR : 날짜/숫자형 데이터를 문자형 데이터로 변경
+-- B) TO_DATE : 
+-- C) TO_NUMBER : 문자형 데이터를 숫자형 데이터로 변환
+
+
+-- A) TO_CHAR 
+-- 날짜/숫자형 데이터를 문자형 데이터로 변경
+-- 자릿수에 맞춰 문자로 형변환
+-- 남은 공백은 왼쪽에 표시
+SELECT 1234 LITERAL_NUMBER FROM DUAL; -- 1234
+SELECT TO_CHAR(1234) FROM DUAL; -- 1234
+SELECT 1234 LITERAL_NUMBER , TO_CHAR(1234) FROM DUAL; -- 1234	1234
+-- 숫자로 인지되었으면 오른쪽 정렬, 문자로 인지되어있으면 왼쪽 정렬
+-- 글자가 어디에 들어가 있느냐에 따라서 문자인지 숫자인지 구분 가능
+
+SELECT 1234+4321, TO_CHAR(1234)+TO_CHAR(4321) FROM DUAL; -- 5555	5555 
+-- 문자인데 연산이 가능한 이유 : 숫자로 형변환에 문제 없는 문자는 오라클에서 자동으로 연산해줌
+-- 문자 연산 가능 // 자바에선 불가능
+
+SELECT TO_CHAR(1234, '99999') FROM DUAL;   --  (공백)1234
+SELECT TO_CHAR(1234, '99999') A FROM DUAL; --  (공백)1234
+-- '99999'의 의미는 5칸을 만들겠다. 여기에 1234를 넣고 빈 공간은 공백으로 하겠다는 의미
+-- ' ' 안에는 9와 0만 가능. 다른 숫자는 에러
+SELECT TO_CHAR(1234, '99') A FROM DUAL;    -- ###
+SELECT TO_CHAR(1234, '88') A FROM DUAL;    -- ERROR
+SELECT TO_CHAR(1234,'00000') A FROM DUAL;  -- 01234
+-- 비어있는 곳을 0으로 채워라
+
+SELECT TO_CHAR(1234,'L99999') FROM DUAL;     --         ￦1234
+-- L을 붙인건 현재 설정된 나라의 원화표시를 붙인 것
+SELECT TO_CHAR(1234,'FML99999') FROM DUAL;   -- ￦1234
+-- FM을 추가로 넣으면 공백 없애는 것
+SELECT TO_CHAR(1234,'$99999') FROM DUAL;     --   $1234
+-- 달러를 찍고 싶으면 L대신 $기호
+SELECT TO_CHAR(1234,'FM$99999') FROM DUAL;   --$1234
+SELECT TO_CHAR(1234,'99,999') FROM DUAL;     --  1,234
+SELECT TO_CHAR(1234,'FM99,999') FROM DUAL;   -- 1,234
+SELECT TO_CHAR(1234,'00,000') FROM DUAL;     --  01,234
+SELECT TO_CHAR(1234,'FM00,000') FROM DUAL;   -- 01,234
+SELECT TO_CHAR(1234,'999') FROM DUAL; -- ####
+-- 자릿수가 부족해서 # 출력
+
+-- 1234보다 더 적은 자리수를 지정할 경우는?
+-- ##을 이용하면 됨
+
+
+
+
+-- EMPLOYEE테이블에서 사원명, 급여(\(원화표시)9,000,000 형식) 조회
+SELECT EMP_NAME, TO_CHAR(SALARY, 'L999,999,999')
+--SELECT EMP_NAME, TO_CHAR(SALARY, 'FML999,999,999')
+FROM EMPLOYEE;
+SELECT TO_CHAR(SYSDATE) FROM DUAL;                  -- 22/03/15
+SELECT TO_CHAR(SYSDATE, 'HH:MI:SS') FROM DUAL;      -- 08:07:45
+SELECT TO_CHAR(SYSDATE, 'AM:HH:MI:SS') FROM DUAL;   -- 오후:08:08:07
+SELECT TO_CHAR(SYSDATE, 'PM:HH:MI:SS') FROM DUAL;   -- 오후:08:08:07 // AM PM 아무거나 쓰면됨  
+SELECT TO_CHAR(SYSDATE, 'AM:HH24:MI:SS') FROM DUAL; -- 오후:20:10:01
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD DAY AM HH:MI:SS') FROM DUAL;  --2022-03-15 화요일 오후 08:10:50
+SELECT TO_CHAR(SYSDATE, 'YYYY-FMMM-DD DAY AM HH:MI:SS') FROM DUAL;--2022-3-15 화요일 오후 8:10:59
+-- FM을 적용시키면 뒤에까지 적용되서 공백제거 되서 나온다
+-- 01초가 나와야하는데 1초가 나옴
+SELECT TO_CHAR(SYSDATE, 'YYYY"년"-MM"월"-DD"일" DAY AM HH:MI:SS') FROM DUAL; -- 2022년-03월-15일 화요일 오전 11:40:48
+SELECT TO_CHAR(SYSDATE, 'YYYY"년" MM"월" DD"일" DAY AM HH:MI:SS') FROM DUAL; -- 2022년 03월 15일 화요일 오후 08:15:13
+-- 글자 출력
+-- 글자처럼 비어있는 자리를 지워주는 역할
+
+-- 보이는게 다른 3가지
+SELECT TO_CHAR(SYSDATE,'YYYY') FROM DUAL; -- 2022
+SELECT TO_CHAR(SYSDATE,'YY') FROM DUAL; -- 22
+SELECT TO_CHAR(SYSDATE,'YEAR')FROM DUAL; -- TWENTY TWENTY-TWO
+
+SELECT TO_CHAR(SYSDATE,'MM')FROM DUAL; -- 03
+SELECT TO_CHAR(SYSDATE,'MONTH')FROM DUAL; -- 3월 
+SELECT TO_CHAR(SYSDATE,'MON')FROM DUAL; -- 3월 
+SELECT TO_CHAR(SYSDATE,'RM')FROM DUAL; -- III 
+SELECT TO_CHAR(SYSDATE,'MM'), TO_CHAR(SYSDATE,'MONTH'),
+        TO_CHAR(SYSDATE,'MON'), TO_CHAR(SYSDATE,'RM')
+FROM DUAL;  -- 03	3월 	3월 	III 
+
+
+SELECT TO_CHAR(SYSDATE,'DDD'), -- 한달을 기준으로 몇일이 지나있는가
+    TO_CHAR(SYSDATE,'DD'), -- 주를 기준으로 몇일이 지나있는가
+    TO_CHAR(SYSDATE,'D') -- 한 해를 기준으로 몇일이 지나있는가
+FROM DUAL; -- 074	15	3
+ 
+SELECT TO_CHAR(SYSDATE,'Q'), TO_CHAR(SYSDATE,'DAY'), TO_CHAR(SYSDATE,'DY')
+FROM DUAL;
+-- Q : 분기를 나타냄. 1-4분기
+-- DAY : 요일
+-- DY : 요일
+
+
+
+--EMPLOYEE테이블에서 이름, 입사일(2022년 03월 15일 (화) 형식) 조회
+
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
+
+
+-- B) TO_DATE
+-- 문자/숫자형 데이터를 날짜형 데이터로 변환
+--
+-- Y : 두자리 연도에 무조건 현재 세기(21세기 , 20XX) 적용
+-- R : 두자리 연도가 50이상일 때, 이전 세기(20세기,19XX) 적용
+--     두자리 연도가 50미만일 때, 현재 세기(21세기, 20XX) 적용
+
+
+SELECT TO_DATE('20220315','YYYYMMDD') FROM DUAL; -- 22/03/15
+SELECT TO_DATE(20220315,'YYYYMMDD') FROM DUAL; -- 22/03/15
+SELECT TO_DATE('20220315','YYYYMMDD') FROM DUAL; -- 22/03/15
+
+-- 입력 받은 문자열 : 20220713을 2022년 07월 13일 형식으로 출력하고 싶다면?
+-- 20220713  -> 2022년 07월 13일
+-- 문자열 받는거니 TO_CHAR써서 하면 편하지 않을까? 해서 써보면 에러
+-- TO_CHAR는 날짜/숫자형 데이터를 문자형 데이터로 변경하는 함수
+-- 아래에서 TO_CHAR()의 첫 매개변수가 숫자가 ' '로 감싸진 문자라서 에러나는 것
+-- 문자+문자 더하기 가능한건? EX)TO_CHAR(1234) + TO_CHAR(4321)
+-- 문자가 숫자로 바뀌는 문자라면 문제없이 연산처리 가능하도록 오라클은 되어있기에 가능했던 것
+-- 자바는 '1234'+'4321'이면 '12344321'이겠지만 오라클은 숫자형식인 문자면 자동형변환해서 연산해준다
+
+SELECT TO_CHAR('20220315','YYYY"년" MM"월" DD"일"') --  ERROR : invalid number format model
+FROM DUAL;
+-- TO_CHAR()를 쓸려면 '20220315'의 형식 바꿔야함
+-- TO_DATE()로 날짜 데이터를 만듬 : SELECT T0_DATE('20220315','YYYYMMDD')
+SELECT TO_CHAR('20220315','YYYY"년" MM"월" DD"일"') --  ERROR : invalid number format model
+FROM DUAL;
+SELECT TO_CHAR(T0_DATE('20220315','YYYYMMDD'), 'YYYY"년" MM"월" DD"일"') -- ERROR
+FROM DUAL; -- 정답. 디버깅할 것
+
+
+SELECT TO_CHAR(TO_DATE('220713 175019','YYMMDD HH24MISS'), 'YY-MM-DD AM HH:MI:SS DY')
+FROM DUAL; -- 22-07-13 오후 05:50:19 수
+-- 데이트는 시간까지 보여주지 않는다. 타임스탬프 써야함
+
+
+-- TO_DATE()에서의 연도 표시 : YY, RR
+-- 연도표시를 YY말고도 RR도 가능. 차이는?
+SELECT TO_DATE('980630', 'YYMMDD'),  -- 98/06/30
+        TO_DATE('980630', 'RRMMDD'), -- 98/06/30
+        TO_DATE('140918', 'YYMMDD'), -- 14/09/18
+        TO_DATE('140918', 'RRMMDD')  -- 14/09/18
+FROM DUAL; -- 98/06/30	98/06/30	14/09/18	14/09/18
+-- TO_DATE() 출력에서는 차이가 없어보인다. TO_CHAR()+TO_DATE()에서는?
+SELECT TO_CHAR(TO_DATE('980630', 'YYMMDD'),'YYYYMMDD'),  -- 20980630
+        TO_CHAR(TO_DATE('980630', 'RRMMDD'),'YYYYMMDD'), -- 19980630
+        TO_CHAR(TO_DATE('140918', 'YYMMDD'),'YYYYMMDD'), -- 20140918
+        TO_CHAR(TO_DATE('140918', 'RRMMDD'),'YYYYMMDD')  -- 20140918
+FROM DUAL; -- 20980630	19980630	20140918	20140918
+-- 앞에있는 천의자리랑 백의자리가 생략되어있어서 그동안 몰랐던 것.
+-- TO_CHAR()로 천의자리까지 만들어준 것
+-- Y : 두자리 연도에 무조건 현재 세기(21세기 , 20XX) 적용
+-- R : 두자리 연도가 50이상일 때, 이전 세기(20세기,19XX) 적용
+--     두자리 연도가 50미만일 때, 현재 세기(21세가, 20XX) 적용
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
+-- C) TO_NUMBER
+-- 문자형 데이터를 숫자형 데이터로 변환
+
+SELECT '1234' CHAR_NUMBER, TO_NUMBER('1234') FROM DUAL;
+
+-- CHAR + CHAR 숫자 연산 가능한데 왜 굳이 NUMBER연산해야할까?
+--
+SELECT '1234'+'4321' FROM DUAL; -- 5555
+SELECT '10,000' + '5,000' FROM DUAL; -- ERROR : invalid number
+ -- 쉼표 때문에 에러. 사람이 인식하기에 ,는 숫자 자릿수 구분이지만
+ --  컴퓨터한테는 쉼표가 붙어 숫자로 인식할 수 없게 된 것
+SELECT TO_NUMBER('10,000') FROM DUAL; -- ERROR : invalid number
+SELECT TO_NUMBER('10,000','999,999') FROM DUAL; -- 10000
+-- 두번째 인자 : 지금 들어온 문자 타입이 이런 형식이라는 것을 인식시키는 기준
+SELECT TO_NUMBER('10,000','999,999'), TO_NUMBER('5,000','999,999') FROM DUAL;--10000	5000
+SELECT TO_NUMBER('10,000','999,999') + TO_NUMBER('5,000','999,999') FROM DUAL;--15000
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+-- 5)NULL처리 함수
+
+
+-- NVL
+-- null값을 지정한 값으로 대체하는 함수
+--
+-- 실제값을 바꾸는건 X
+-- 대체할 값은 대체할려는 데이터의 타입을 따라가야한다 
+--      ex)bonus의 데이터타입이 number이므로 숫자만가능
+
+-- NULL을 다른 값으로 인지시키게 못하나?로부터 나오게 됨
+SELECT EMP_NAME, BONUS, NVL(BONUS, 0) 
+FROM EMPLOYEE;
+
+SELECT NVL(BONUS, '보너스X') -- ERROR : : invalid number
+FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
+
+-- NVL2
+-- NVL2(컬럼명, NULL이면 이걸로 변경, NULL이 아니면 이걸로 변경)
+-- NULL값이 존재한다면 두번쨰 인자값으로 변경, NULL값이 존재하지 않으면 세번쨰 인자값으로 변경
+-- 해당데이터가 NULL이면 0.7로 아니면 0.5로 대체
+
+
+-- NULLIF
+-- 비교하는 값이 같으면 NULL, 다르면 앞에 있는 값 반환
+-- (NULL)	123
+
+
 
 
 
@@ -494,6 +779,132 @@ FROM EMPLOYEE;
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
+-- 6.선택함수
+
+-- DECODE
+-- DECODE(계산식|컬럼명, 조건값1, 선택값1, 조건값2, 선택값2, ...)
+-- 계산식에 따라 조건값1에 맞으면 선택값1 반환, 조건값2에 맞으면 선택값2를 반환하는 함수
+-- 범위를 다루는 >,< 같은 것들은 DECODE로 쓸 수 없다
+-- JAVA SWITCH 스위치도 딱딱 수가 떨어지는 것만 가능
+
+-- 주민번호 옆에 성별 같이 찍히도록 해볼 것
+
+
+
+
+-- 직원의 급여를 인상하고자 한다
+-- 직급코드가 J7인 직원은 급여의 10%를 인상하고
+-- 직급코드가 J6인 직원은 급여의 15%를 인상하고
+-- 직급코드가 J5인 직원은 급여의 20%를 인상하며
+-- 그 외 직급의 직원은 급여의 5%만 인상한다
+-- 직원 테이블에서 직원명, 직급코드, 급여, 인상급여(위 조건)을 조회
+
+
+
+
+-- CASE ~ WHEN ~ THEN
+-- CASE WHEN 조건식THEN 결과값
+--      WHEN 조건식THEN 결과값
+--      ELSE 결과값
+-- END
+
+
+
+
+-- 직원의 급여를 인상하고자 한다
+-- 직급코드가 J7인 직원은 급여의 10%를 인상하고
+-- 직급코드가 J6인 직원은 급여의 15%를 인상하고
+-- 직급코드가 J5인 직원은 급여의 20%를 인상하며
+-- 그 외 직급의 직원은 급여의 5%만 인상한다
+-- 직원 테이블에서 직원명, 직급코드, 급여, 인상급여(위 조건)을 조회
+
+
+-- 위와 같은 코드
+-- CASE 공통된컬럼명 WHEN 조건식 THEN 결과
+
+
+-- 사번, 사원명, 급여, 등급조회
+-- 등급 조건 : 급여가 500만보다 크면 1등급, 350만보다 크면 2등급, 200만보다 크면 3등급, 나머지는 4등급
+-- DECODE로도 가능?
+-- 범위를 다루는 >,< 같은 것들은 DECODE로 쓸 수 없다
+-- JAVA SWITCH 스위치도 딱딱 수가 떨어지는 것만 가능
+
+
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+---------------------------------- 그룹 함수 ----------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
+-- 그룹 함수
+
+
+-- SUM
+-- 총합계
+-- EMPLOYEE테이블에서 전 사원의 급여 총합
+
+
+
+-- EMPLOYEE테이블에서 남자사원의 급여 총합
+
+
+
+-- AVG
+-- 평균
+-- EMPLOYEE테이블에서 전 사원의 급여 평균
+ -- 3047662.60869565217391304347826086956522
+ 
+-- EMPLOYEE테이블에서 여자사원의 급여 총합
+-- 2542030
+
+
+-- EMPLOYEE테이블에서 전 사원의 보너스 평균
+-- BONUS가 NULL인 사원은 0으로 처리
+-- 0.0847826086956521739130434782608695652174
+-- SUM(BONUS)/23
+
+
+
+-- 0.2166666666666666666666666666666666666667
+-- NULL을 가진 값은 평균 계산에서 제외되어 계산
+-- SUM(BONUS)/9
+
+
+
+-- MIN / MAX
+-- 최소 / 최대
+-- 숫자, 날짜, 문자도 가능
+-- EMPLOYEE테이블에서 최소 급여와 최대 급여
+-- 1380000	8000000
+
+
+
+
+-- 문자 넣기
+
+-- 날짜 넣기
+
+
+
+-- COUNT
+-- NULL값은 제외하고 카운트
+-- 23
+-- 직원 23명 카운트함
+
+-- 21
+-- NULL 2명을 제외한 21 반환
+
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 
 
