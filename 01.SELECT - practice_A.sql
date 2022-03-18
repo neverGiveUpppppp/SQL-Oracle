@@ -34,10 +34,10 @@ SELECT 컬럼명 FROM 테이블명;
 
 
 -- EMPLOYEE 테이블의 사번,이름,급여 조회
-
+SELECT EMP_ID, EMP_NAME, SALARY FROM EMPLOYEEL
 
 --EMPLOYEE 테이블의 모든 정보 조회
-
+SELECT * FROM EMPLOYEE;
 
 /*
 -- 실습 문제 --
@@ -50,39 +50,41 @@ SELECT 컬럼명 FROM 테이블명;
 
 --1.JOB 테이블의 모든 정보 조회
 -- 방법1
-
+SELECT * FROM JOB;
 
 -- 방법2
-
+SELECT JOB_CODE,JOB_NAME FROM JOB; 
 
 
 --2.JOB 테이블의 직급 이름 조회
-
+SELECT JOB_NAME FROM JOB;
 
 --3.DEPARTMENT 테이블의 모든 정보 조회
 -- 방법1
+SELECT * FROM DEPARTMENT;
 
 -- 방법2
-
+SELECT DEPT_ID, DEPT_TITLE, LOCATION_ID FROM DEPARTMENT;
 
 --4.EMPLOYEE 테이블의 직원명, 이메일, 전화번호, 고용일 조회
+SELECT EMP_NAME,EMAIL,PHONE,HIRE_DATE FROM EMPLOYEE;
 
 --5.EMPLYEE 테이블의 고용일, 사원이름, 월급 조회
-
+SELECT HIRE_DATE, EMP_NAME,SALARY FROM EMPLOYEE;
 
 
 
 --컬럼 값 산술 연산
 --EMPLOYEE테이블에서 직원명, 연봉 조회(연봉 = 급여*12)
-
+SELECT EMP_NAME, SALARY*12 연봉 FROM EMPLOYEE;
 
 --EMPLOYEE테이블에서 직원명, 연봉, 보너스를 추가한 연봉 조회
 -- 방법1
-
-
+SELECT EMP_NAME, SALARY*12 연봉, SALARY*(1+BONUS) FROM EMPLOYEE;
 --  수식에 NULL이 있으면 결과값에 NULL이 나옴 
 -- 방법2
-
+SELECT EMP_NAME 이름, SALARY * 12 연봉, SALARY*(1+BONUS)*12 AS 보너스
+FROM EMPLOYEE;
 
 
 /*
@@ -92,7 +94,9 @@ SELECT 컬럼명 FROM 테이블명;
  - 오늘날짜 SYSDATE
 */
 --(SALARY+SALARY*BONUS)*12
-
+SELECT EMP_NAME 이름, SALARY * 12 연봉,SALARY *(1+BONUS)*12 "총수령액(보너스포함)", 
+        SALARY *(1+BONUS)*12 - SALARY*12*0.03 AS 실수령액
+FROM EMPLOYEE;
 
 
 
@@ -125,17 +129,23 @@ SELECT 컬럼명 FROM 테이블명;
 
 -- EMPLOYEE테이블에서 직원의 직급 코드 조회
 
-
+-- bang으로 시작하는 email 다 조회
 -- 결과 : 방명수 bang ns@kh.kr
-
+SELECT EMAIL
+FROM EMPLOYEE
+WHERE EMAIL LIKE 'bang%';
 
 -- 결과 : 없음
+SELECT EMAIL
+FROM EMPLOYEE
+WHERE EMAIL LIKE 'Bang%';
 -- 리터럴은 대소문자 철저히 구별하기에 대문자 BANG으로 시작하는 EMAIL이 없어서 안나온 것
 
 
 
 -- EMPLOYEE 테이블에서 직원의 부서 코드를 중복 없이 조회
-
+SELECT DISTINCT DEPT_CODE
+FROM EMPLOYEE;
 
 
 -- DISTINCT는 한번만 쓸 수 있다
@@ -160,7 +170,9 @@ WHERE 조건식; -- 행을 선택하는 조건 기술, 조건을 만족하는 행만 반환
 */
 
 --EMPLOYEE테이블에서 부서코드가 'D9'인 직원의 이름, 부서코드 조회
-
+SELECT  EMP_NAME, DEPT_CODE
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D9';
 
 
 
@@ -170,22 +182,28 @@ WHERE 조건식; -- 행을 선택하는 조건 기술, 조건을 만족하는 행만 반환
 
 
 --급여가 4000000이상인 직원의 이름, 급여 조회
-
+-- ''로 감싸도 숫자로 인지잘한다. '' 없어도 됨
+SELECT EMP_NAME, SALARY
+FROM EMPLOYEE
+WHERE SALARY >= 4000000;
 
 
 
 
 -- EMPLOYEE테이블에서 부서코드가 D9이 아닌 사원의 사번, 이름, 부서코드조회
-
-
-
---WHERE DEPT_CODE != 'D9';
+SELECT EMP_ID, EMP_NAME, DEPT_CODE
+FROM EMPLOYEE
+WHERE DEPT_CODE != 'D9';
+--WHERE DEPT_CODE ^= 'D9';
+--WHERE DEPT_CODE <> 'D9';
 
 
 
 -- EMPLOYEE 테이블에서 퇴사 여부가 N인 직원을 조회하고 근무 여부를 재직중으로 표시
 -- 사번,이름, 고용일, 근무여부 조회
-
+SELECT EMP_ID, EMP_NAME, HIRE_DATE, '근무 여부' 재직중
+FROM EMPLOYEE
+WHERE ENT_YN = 'N';
 
 
 
@@ -196,8 +214,17 @@ WHERE 조건식; -- 행을 선택하는 조건 기술, 조건을 만족하는 행만 반환
 --3.EMPLOYEE테이블에서 실수령액(총수령액-(연봉*세금3%))이 5천만원 이상인 
 --  사원의 이름, 급여, 실수령액, 고용일 조회
 
+SELECT EMP_NAME, SALARY, HIRE_DATE
+FROM EMPLOYEE
+WHERE SALARY >= 3000000;
 
+SELECT EMP_NAME, SALARY, HIRE_DATE, PHONE
+FROM EMPLOYEE
+WHERE SAL_LEVEL = 'S1';
 
+SELECT EMP_NAME, SALARY, SALARY+SALARY*(SALARY*BONUS)-(SALARY*12*0.03)실수령액, HIRE_DATE
+FROM EMPLOYEE
+WHERE SALARY+SALARY*(SALARY*BONUS)-(SALARY*12*0.03) >= 5000000;
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -212,7 +239,7 @@ FROM EMPLOYEE
 WHERE DEPT_CODE = 'D6' AND SALARY > 3000000;
 
 
--- EMPLOYEE 테이블에서 부섴드가 D6이거나 급여를 3000000보다 많이 받는 직원의 이름,부서코드, 급여조회
+-- EMPLOYEE 테이블에서 부서코드가 D6이거나 급여를 3000000보다 많이 받는 직원의 이름,부서코드, 급여조회
 SELECT  EMP_NAME, DEPT_CODE,SALARY 
 FROM EMPLOYEE
 WHERE   DEPT_CODE = 'D6' OR SALARY > 3000000;
@@ -231,7 +258,15 @@ SELECT EMP_NAME, DEPT_CODE, HIRE_DATE
 FROM EMPLOYEE
 WHERE DEPT_CODE = 'D9' OR HIRE_DATE < '02/01/01';
 
+--- 다시풀이
+SELECT *
+FROM EMPLOYEE
+WHERE SALARY >= 4000000 AND JOB_CODE = 'J2';
 
+SELECT  EMP_NAME, DEPT_CODE, HIRE_DATE 
+FROM EMPLOYEE
+WHERE  (DEPT_CODE = 'D9' OR DEPT_CODE = 'D5')
+        AND HIRE_DATE < '02/01/01' ;
 
 -- 이 코드는 틀린 코드
 -- 기준일보다 작은게 빠른 것. 오늘보다 내일이 더 큰 숫자
@@ -260,6 +295,15 @@ SELECT EMP_ID, EMP_NAME, SALARY, DEPT_CODE, JOB_CODE
 FROM EMPLOYEE 
 WHERE SALARY BETWEEN 3500000 AND 6000000;
 
+---다시 풀이
+SELECT  EMP_ID, EMP_NAME, SALARY, DEPT_CODE, JOB_CODE 
+FROM EMPLOYEE
+WHERE SALARY BETWEEN 3500000 AND 6000000;
+SELECT  EMP_ID, EMP_NAME, SALARY, DEPT_CODE, JOB_CODE 
+FROM EMPLOYEE
+WHERE SALARY>=3500000 AND SALARY <=6000000;
+
+
 -- 반대로 급여를 3500000미만 6000000초과를 받는 사원의 사번, 이름, 급여, 부서코드, 직급코드 조회
 SELECT EMP_ID, EMP_NAME, SALARY, DEPT_CODE, JOB_CODE
 FROM EMPLOYEE
@@ -281,7 +325,13 @@ WHERE HIRE_DATE BETWEEN '90/01/01' AND  '01/01/01';
 
 -- WHERE HIRE_DATE >= '90/01/01' AND HIRE_DATE <= '01/01/01';
 
-
+---다시풀이
+SELECT *
+FROM EMPLOYEE
+WHERE HIRE_DATE BETWEEN '90/01/01' AND '01/01/01';
+SELECT *
+FROM EMPLOYEE
+WHERE HIRE_DATE >= '90/01/01' AND HIRE_DATE <='01/01/01';
 
 
 ------------------------------------------------------------------------------
@@ -338,17 +388,24 @@ SELECT EMP_ID, EMP_NAME, PHONE
 FROM EMPLOYEE
 WHERE PHONE LIKE '___9%';
 
---EMPLOYEE 테이블에서 이메일 중 _의 앞 글자가 3자리인 이메일 주소를 가진 사원의 사번의 사번, 이름, 이메일 주소 조회
+---RE
+SELECT EMP_ID, EMP_NAME,PHONE
+FROM EMPLOYEE
+WHERE PHONE LIKE '___9%';
+
+
+--EMPLOYEE 테이블에서 이메일 중 _의 앞 글자가 3자리인 이메일 주소를 가진 사원의 사번, 이름, 이메일 주소 조회
 SELECT EMP_ID, EMP_NAME, EMAIL
 FROM EMPLOYEE
 WHERE EMAIL LIKE '___ _%' ESCAPE ' ';
-D
---WHERE EMAIL LIKE '___%'; -- 언더바_가 들어간 이메일 출력. 앞글자 2개도 4개 전부 출력
+
+--RE
+SELECT EMP_ID, EMP_NAME, EMAIL
+FROM EMPLOYEE
+WHERE EMAIL LIKE '___!_%' ESCAPE '!';
 
 
 
--- ESCAPE의 기준이 되는 코드는 ' '안에서 설정 가능? YES
--- ESCAPE의 ' '안에 어떤 코드이던 들어가서 설정 가능?
 /*
 LIKE를 쓸 때 패턴!
 와일드카드 : _ %
@@ -376,6 +433,10 @@ FROM EMPLOYEE
 --WHERE EMP_NAME NOT LIKE '김%';
 WHERE NOT EMP_NAME LIKE '김%';
 
+---RE
+SELECT EMP_ID, EMP_NAME, HIRE_DATE
+FROM EMPLOYEE
+WHERE EMP_NAME NOT LIKE '김%';
 
 --WHERE NOT EMP_NAME LIKE '김%';
 -- NOT 순서 : 해당 컬럼명 앞뒤 둘 다 가능
@@ -397,7 +458,6 @@ LIKE와 사용하는 % _ 는 와일드카드 적용받는다
 --2.EMPLOYEE 테이블에서 전화번호 처음 세자리가 010이 아닌 사원의 이름, 전화번호 조회
 --3.EMPLOYEE 테이블에서 메일주소 _의 앞이 4자이면서 DEPT_CODE가 D9 또는 D6이고
 --  고용일이 90/01/01 ~ 00/12/01이고, 급여가 2700000만 이상인 사원의 전체 정보 조회
-
 SELECT EMP_NAME
 FROM EMPLOYEE
 WHERE EMP_NAME LIKE '%연';
@@ -414,6 +474,23 @@ WHERE EMAIL LIKE '____!_%' ESCAPE '!'
         AND HIRE_DATE BETWEEN '90/01/01' AND '00/12/01'
         AND SALARY >= 2700000;
 
+
+---RE
+SELECT EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME LIKE '%연';
+
+SELECT EMP_NAME, PHONE
+FROM EMPLOYEE
+WHERE PHONE NOT LIKE '010%';
+
+SELECT *
+FROM EMPLOYEE
+WHERE EMAIL LIKE '____!_%' ESCAPE '!' 
+            AND (DEPT_CODE = 'D9' OR DEPT_CODE = 'D6')
+            AND HIRE_DATE BETWEEN '90/01/01' AND '00/12/01'
+            AND SALARY >= 2700000;
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -427,7 +504,10 @@ WHERE EMAIL LIKE '____!_%' ESCAPE '!'
 SELECT EMP_ID, EMP_NAME,SALARY,BONUS
 FROM EMPLOYEE
 WHERE BONUS IS NULL;
-
+---RE
+SELECT EMP_ID, EMP_NAME,SALARY,BONUS
+FROM EMPLOYEE
+WHERE BONUS IS NULL;
 
 --WHERE BONUS = NULL; 값 안나옴
 --WHERE BONUS = (null); 값 안나옴
@@ -437,7 +517,10 @@ SELECT EMP_ID, EMP_NAME,SALARY,BONUS
 FROM EMPLOYEE
 WHERE BONUS IS NOT NULL;
 WHERE NOT BONUS IS NULL;
-
+---RE
+SELECT EMP_ID, EMP_NAME,SALARY,BONUS
+FROM EMPLOYEE
+WHERE BONUS IS NOT NULL;
 
 -- WHERE NOT BONUS IS NULL; 
 -- NOT은 컬렴명 앞에 붙어도 가능
@@ -456,9 +539,20 @@ SELECT EMP_NAME, BONUS, DEPT_CODE
 FROM EMPLOYEE
 WHERE DEPT_CODE IS NULL AND BONUS IS NOT NULL;
 
+---RE
+SELECT EMP_NAME, MANAGER_ID, DEPT_CODE
+FROM EMPLOYEE
+WHERE MANAGER_ID IS NULL AND DEPT_CODE IS NULL;
+
+SELECT EMP_NAME, BONUS, DEPT_CODE
+FROM EMPLOYEE 
+WHERE DEPT_CODE IS NULL AND BONUS IS NOT NULL;
+
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
+
 
 --IN
 -- 목록에 일치하는 값이 있으면 TRUE가 되어 값 반환
@@ -474,29 +568,15 @@ WHERE DEPT_CODE = 'D6' OR DEPT_CODE = 'D9';
 SELECT EMP_NAME, JOB_CODE, SALARY
 FROM EMPLOYEE
 --WHERE JOB_CODE = 'J1' OR JOB_CODE = 'J2' OR JOB_CODE = 'J3' OR JOB_CODE =  'J4';
+WHERE JOB_CODE IN ('J1','J2','J3','J4'); 
+
+---RE
+SELECT EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
 WHERE JOB_CODE IN ('J1','J2','J3','J4');
 
 
-
-
-
 -- 소괄호로 처음 들어가서 D6를 맞딱들이고 각 조건 체크해서 반환. 다음 D9체크
-
-
-
-
-
---WHERE JOB_CODE = 'J1' OR JOB_CODE = 'J2'
---        OR JOB_CODE = 'J3' OR JOB_CODE = 'J4';
-
-
-
-
--- 위의 두 쿼리를 IN 사용
-
- 
-
-
 
 
 
@@ -508,28 +588,79 @@ WHERE JOB_CODE IN ('J1','J2','J3','J4');
 -- 연결 연산자 ||
 -- 자바에서의 or논리연산자의 기호가 SQL에서는 연결연산자
 -- EMPLOYEE테이블에서 사번, 이름, 급여를 연결해서 조회 (EX. 200선동일8000000)
-SELECT 
-FROM EMPLOYEE
-WHERE 
+SELECT EMP_ID || EMP_NAME || SALARY 급여
+FROM EMPLOYEE;
 
 
-
--- EMPLOYEE테이블에서 ' 사원명의 월급은 급여원입니다' 형식으로 조회
-SELECT 
-FROM EMPLOYEE
-WHERE 
-
-
+-- EMPLOYEE테이블에서 ' "사원명"의 월급은 "급여"원입니다' 형식으로 조회
+SELECT EMP_NAME ||'명의 월급은' || SALARY ||'원 입니다'
+FROM EMPLOYEE;
 -- 문장으로 쓰고 싶을 경우 필요
 
-
--- 지금까지 연산자들에 대해 보았고 다음 시간에는 함수 들어가기 시작
-
-
-
+---RE
+SELECT EMP_NAME, EMAIL || ' 이메일 주소 '||'힘내'
+FROM EMPLOYEE;
 
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
+
+
+
+--BETWEEN
+-- 반대로 급여를 3500000미만 6000000초과를 받는 사원의 사번, 이름, 급여, 부서코드, 직급코드 조회
+
+SELECT EMP_ID, EMP_NAME, SALARY, DEPT_CODE, JOB_CODE
+FROM EMPLOYEE
+--WHERE SALARY BETWEEN 3500000 AND 6000000;
+WHERE SALARY NOT BETWEEN 3500000 AND 6000000;
+-- 1.EMPLOYEE 테이블에 고용일이 90/01/01 ~ 01/01/01인 사원의 전체 내용을 조회 (BETWEEN 사용)
+SELECT *
+FROM EMPLOYEE
+--WHERE HIRE_DATE >= '90/01/01' AND HIRE_DATE <= '01/01/01';
+WHERE HIRE_DATE BETWEEN '90/01/01' AND '01/01/01';
+
+-- LIKE
+--EMPLOYEE 테이블에서 이메일 중 _의 앞 글자가 3자리인 이메일 주소를 가진 사원의 사번의 사번, 이름, 이메일 주소 조회
+SELECT EMP_ID, EMP_NAME, EMAIL
+FROM EMPLOYEE
+WHERE EMAIL LIKE '___^_%' ESCAPE '^';
+
+-- NULL
+-- EMPLOYEE 테이블에서 부서 배치를 받지 않았지만 보너스를 지급받는 직원의 이름,  보너스, 부서코드 조회
+SELECT EMP_NAME, BONUS, DEPT_CODE
+FROM EMPLOYEE
+WHERE DEPT_CODE IS NULL AND BONUS IS NOT NULL;
+
+-- IN
+-- 직급코드가 J1, J2, J3, J4인 사람들의 이름, 직급코드, 급여 조회
+SELECT EMP_NAME, JOB_CODE, SALARY
+FROM EMPLOYEE
+--WHERE JOB_CODE = 'J1' OR JOB_CODE = 'J2' OR JOB_CODE = 'J3' OR JOB_CODE = 'J4';
+WHERE JOB_CODE IN ('J1','J2','J3','J4');
+
+-----------실습문제-----------
+--1.EMPLOYEE 테이블에서 이름 끝이 '연'으로 끝나는 사원 이름 조회
+--2.EMPLOYEE 테이블에서 전화번호 처음 세자리가 010이 아닌 사원의 이름, 전화번호 조회
+--3.EMPLOYEE 테이블에서 메일주소 _의 앞이 4자이면서 DEPT_CODE가 D9 또는 D6이고
+--  고용일이 90/01/01 ~ 00/12/01이고, 급여가 2700000만 이상인 사원의 전체 정보 조회
+
+SELECT EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME LIKE '%연';
+
+SELECT EMP_NAME, PHONE
+FROM EMPLOYEE
+WHERE PHONE NOT LIKE '010%';
+
+SELECT  *
+FROM EMPLOYEE
+WHERE EMAIL LIKE '____!_%' ESCAPE '!' 
+        AND (DEPT_CODE 'D9' OR DEPT_CODE 'D6')
+        AND HIRE_DATE '90/01/01' AND '00/12/01'
+        AND SALARY >= 2700000;
 
 
 
