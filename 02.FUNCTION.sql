@@ -6,9 +6,23 @@
 
 함수(FUNCTION)
 
-함수 두 종류
-1.단일 행 함수
-2.그룹 함수
+함수(FUNCTION) 두 종류
+A.단일 행 함수
+B.그룹 함수
+
+A.단일 행 함수
+    1.문자 관련 함수 : LENGTH, INSTR,LPAD,LTRIM,TRIM,SUBSTR, CONCAT,REPLACE
+    2.숫자 관련 함수 : ABS,MOD,ROUND,CEIL,FLOOR/TRUNC
+    3.날짜 관련 함수 : MONTHS_BETWEEN, ADD_MONTHS, NEXT_DAY,LAST_DAT,EXTRACT
+    4.형변환 함수 : TO_CHAR, TO_DATE, TO_NUMBER
+    5.null처리 함수 : NVL, NVL2, NULLIF 
+    6.선택 함수 : DECODE, CASE WHEN THEN
+    
+B.그룹함수
+SUM, AVG, MIN/MAX, COUNT
+
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 
  1.단일 행 함수
@@ -20,7 +34,7 @@ n개의 데이터를 넣으면 1개 나오는 것
 n개의 값을 읽어 1개의 결과 리턴
 
 
-SELECT절에 단일 행 함수와 그룹 함수를 함께 사용할 수 있다/없다?
+Q. SELECT절에 단일 행 함수와 그룹 함수를 함께 사용할 수 있다/없다?
 A. 없다
 
 WHY?
@@ -40,26 +54,24 @@ HAVING 절
 ORDER BY 절
 ( 사실상 프론트빼고 다 가능)
 
-1.단일 행 함수
-자바 메소드랑 비슷
- 1)문자 관련 함수
-LENGTH / LENGTHB
 
-2)
-
-
-2.그룹 함수
- 
- 
- 
+<SELECT문 실행순서 및 사용형식>
+1. FROM 테이블명 - 조회 대상 컬럼이 있는 테이블명 기술
+2. WHERE 컬럼명 연산자 조건 - 행을 선택하는 조건을 기술
+3. GROUP BY 컬럼명 } 계산식 - 그룹묶을 컬럼명, 계산식 기술
+4. HAVING 그룹함수 연산자 비교값 - 그룹묶은 값들을 그룹함수로 계산후 선택을 위한 조건기술
+5. SELECT * | [DISTINCT] 컬럼명, 계산식 [AS] 별칭
+6. ORDER BY 컬럼명 | 별칭 | 컬럼순서 [ASC] | DESC
  
 */
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
+
 -- 1.단일 행 함수
 -- 1)문자 관련 함수
 -- LENGTH / LENGTHB
+-- 인자 : 문자,숫자,특수기호, 컬럼명 
 -- B = BYTE
 -- LENGTH  : 길이
 -- LENGTHB : 글자의 바이트 사이즈 반환 
@@ -76,10 +88,10 @@ SELECT LENGTHB('오라클') FROM DUAL; -- 9
 SELECT LENGTH(EMAIL), LENGTHB(EMAIL) FROM EMPLOYEE; -- 15 15
 -- 리터럴값도 가능하지만 컬럼도 가능
 
-SELECT LENGTH(EMAIL), LENGTH(EMAIL) FROM EMPLOYEE; -- 15 15
+SELECT LENGTH(EMP_NAME), LENGTH(EMAIL) FROM EMPLOYEE;   -- 3	15
 -- 이름, 이메일 -> 길이, 바이트 사이즈
 
-SELECT LENGTH(EMP_NAME), LENGTH(EMP_NAME) FROM EMPLOYEE; -- 길이 3
+SELECT LENGTHB(EMP_NAME), LENGTHB(EMAIL) FROM EMPLOYEE; -- 9	15
 SELECT EMP_NAME, LENGTHB(EMP_NAME), LENGTHB(EMP_NAME) FROM EMPLOYEE; -- 길이B 9
         
 SELECT EMP_NAME, LENGTH(EMP_NAME), LENGTHB(EMP_NAME),
@@ -95,7 +107,7 @@ FROM EMPLOYEE; -- 선동일	3	9	sun_di@kh.or.kr	15	15
 -- 해당 문자열이 처음 나온 위치 인덱스번호 반환(ZERO-INDEX X)
 -- INSTR(’문자열’or컬럼명, ‘찾아낼 문자‘,  시작 index, 2번째인자인 문자가 몇번째 나오는 문자인지)
 
---1번째 인자 : 찾을 문자열 or 컬럼명. 
+--1번째 인자 : 찾을 문자열 or 컬럼명
 --2번째 인자 : 첫번째 중에 찾고 싶은 문자
 --3번째 인자 : 몇번째부터 읽기 시작할 것이냐. 안적으면 1부터 시작
 --4번째 인자 : ' '의 문자가 세번째인자로부터 세기 시작해서 "몇번째로 나오는 문자인가”
@@ -109,7 +121,7 @@ SELECT INSTR('AABAACAABBAA','B', 7) FROM DUAL; -- 9 // 7번째부터 읽기 시작하라고
 -- 코딩해설 : 7번쨰부터 읽기 시작해서 B가 처음 나올 때까지 읽어서, 처음 나오는 B의 위치 반환해
 SELECT INSTR('AABAACAABBAA','B',-1) FROM DUAL; -- 10 // 마이너스(-)는 거꾸로 읽기
 -- 마이너스(-)는 거꾸로 읽기
--- 역순 뒤에서 찍은 기준점 기준으로 왼쪽으로 세기
+-- 역순 뒤에서 찍은 기준점 기준으로 왼쪽으로 세고 인덱스번호는 맨왼쪽에서 오른쪽으로
 SELECT INSTR('AABAACAABBAA','A',-3) FROM DUAL; -- 8
 SELECT INSTR('AABAACAABBAA','B',1,2) FROM DUAL; -- 9
 -- 1에서부터 두번째 있는 'B'를 찾아라
@@ -117,6 +129,17 @@ SELECT INSTR('AABAACAABBAA','C',1,2) FROM DUAL; -- 0
 
 SELECT INSTR('AABAACAABBAA', 'AB',3) FROM DUAL; -- 8
 -- 두글자 이상은 첫글자 기준으로 인덱스반환
+
+-- 3번째 인자, 마이너스(-): 거꾸로 읽기
+SELECT INSTR('AABAACAABBAA','B',-1) FROM DUAL; -- 10
+SELECT INSTR('AABAACAABBAA','B',-1,1) FROM DUAL; -- 10
+SELECT INSTR('AABAACAABBAA','B',-1,2) FROM DUAL; -- 9
+SELECT INSTR('AABAACAABBAA','B',-1,3) FROM DUAL; -- 3
+
+SELECT INSTR('AABAACAABBAA','B',-1,-1) FROM DUAL; -- ERROR : 4번째 인자는 양수만 가능
+SELECT INSTR('AABAACAABBAA','B',-1,0) FROM DUAL;  -- ERROR : 4번째 인자는 0,음수 불가
+
+
 
 -- EMPLOYEE테이블에서 이메일의 @위치 반환
 SELECT INSTR(EMAIL,'@',1) FROM EMPLOYEE; -- 7 
@@ -130,11 +153,11 @@ SELECT EMP_NAME, EMAIL, INSTR(EMAIL, '@') FROM EMPLOYEE;
 
 
 -- LPAD / RPAD
--- 왼쪽 공백 / 오른쪽 공백
--- 오른쪽 정렬 / 왼쪽 정렬
--- 주어진 값에 임의의 문자열을 왼쪽/오른쪽에 덧붙여 길이 n개의 문자열 반환
--- LPAD(컬럼명, 문자 총 길이,공백 대신 대체할 문자)
--- 전체 길이에서 남은 공간에 공백으로 채움
+ 왼쪽 공백 / 오른쪽 공백
+ 오른쪽 정렬 / 왼쪽 정렬
+ LPAD(컬럼명, 문자 총 길이,공백 대신 대체할 문자)
+ 주어진 값에 임의의 문자열을 왼쪽/오른쪽에 덧붙여 길이 n개의 문자열 반환
+ 전체 길이에서 남은 공간에 공백으로 채움
 
 
 SELECT LPAD(EMAIL,20) FROM EMPLOYEE; --      sun_di@kh.or.kr//
@@ -154,6 +177,7 @@ SELECT LPAD(EMAIL,5), RPAD(EMAIL,5) FROM EMPLOYEE;
 -- LTRIM / RTRIM
 -- 좌/우에서부터 지정한 문자를 제거한 나머지 반환
 --      문자를 지정하지 않을 경우, 공백 제거
+-- LTRIM(컬럼명,'지울문자')
 -- LTRIM : 왼쪽부터 순서대로 제거
 -- RTRIM : 오른쪽부터 순서대로 제거
 -- 지울려는 문자가 아닌 문자에 다다르면 TRIM 중지
@@ -187,7 +211,7 @@ SELECT RTRIM('ACABACCKH','ABC') FROM DUAL; -- ACABACCKH
 
 -- TRIM
 -- 앞/뒤/양쪽에서 지정한 문자를 제거한 나머지 반환
--- TRIM(제거방향, '제거할 문자 1개', '찾을 문자열OR컬럼명')
+-- TRIM(제거방향 '제거할 문자 1개' FROM '찾을 문자열OR컬럼명')
 -- LEADING : 앞부터 제거
 -- TRAILING : 뒤부터 제거
 -- BOTH : 양쪽에서부터 제거
@@ -205,9 +229,13 @@ SELECT TRIM(TRAILING 'Z' FROM 'ZZZKHZZZZ') FROM DUAL; -- ZZZKH
 SELECT TRIM(BOTH 'Z' FROM 'ZZZKHZZZZ') FROM DUAL; -- KH
 -- BOTH 양쪽에서부터 제거
 
---LTRIM/RTRIM처럼 인자 추가 형식이 아닌 
---코드 구조를 바꿔서 써야함 
---제거를 지우겠다 어디서부터? 컬럼명부터
+SELECT TRIM('   KH   ') FROM DUAL; -- KH
+SELECT TRIM(BOTH FROM '   KH   ') FROM DUAL; -- KH//
+SELECT TRIM(BOTH ' ' FROM '   KH   ') FROM DUAL; -- KH//
+SELECT TRIM(BOTH FROM '   KH   ') FROM DUAL; -- KH// 2번인자 제거할 문자 : 생략가능
+SELECT TRIM(LEADING 'K' FROM '   KH   ') FROM DUAL; --    KH   // 공백에서 멈춰 K안지워짐
+SELECT TRIM(TRAILING 'K' FROM '   KH   ') FROM DUAL; --    KH   //공백에서 멈춰 K안지워짐
+SELECT TRIM(TRAILING ' ' FROM '   KH   ') FROM DUAL; --    KH//
 
 
 ------------------------------------------------------------------------------
@@ -228,6 +256,14 @@ SELECT SUBSTR('HELLOMYGOODFRINEDS', -8, 3) FROM DUAL; -- DFR
 -- 뒤에서 8번째(D)부터 오른쪽으로 3개의 문자 반환
 -- 위에서 마이너스(-)였으면 기준점이 뒤에서부터 세고 왼쪽방향으로 카운팅했지만 얘는 오른쪽으로 카운팅
 SELECT SUBSTR('HELLOMYGOODFRINEDS', -10, 2) FROM DUAL; -- OO
+
+-- 0부터 시작해도 1부터 적용
+SELECT SUBSTR('HELLOMYGOODFRIENDS',0,5) FROM DUAL; -- HELLO // 0부터 시작해도 1부터 적용
+SELECT SUBSTR('HELLOMYGOODFRIENDS',1,5) FROM DUAL; -- HELLO // 0부터 시작해도 1부터 적용
+-- 마이너스(-) 역순
+SELECT SUBSTR('HELLOMYGOODFRIENDS',-10,2) FROM DUAL;  -- OO
+SELECT SUBSTR('HELLOMYGOODFRIENDS',-10,-2) FROM DUAL; -- 3RD 인자 몇번째문자인지가 -이면 NULL값
+
 
 
 -- EMPLOYEE 테이블에서 이름, 이메일, 이메일의 아이디 조회
@@ -264,7 +300,7 @@ WHERE SUBSTR(EMP_NO, 8, 1) = 2;
 
 -- EMPLOYEE테이블에서 직원들의 주민번호를 이용하여 사원명, 생년, 생월, 생일 조회
 
-SELECT EMP_NAME SUBSTR(EMP_NO, 1, 2) 생년, SUBSTR(EMP_NO, 3, 2) 생월, SUBSTR(EMP_NO, 5, 2) 생일
+SELECT EMP_NAME, SUBSTR(EMP_NO, 1, 2) 생년, SUBSTR(EMP_NO, 3, 2) 생월, SUBSTR(EMP_NO, 5, 2) 생일
 FROM EMPLOYEE;
 
 
@@ -290,8 +326,12 @@ SELECT CONCAT('가나다라','123') FROM DUAL; -- 가나다라123
 SELECT '가나다라' || '123' FROM DUAL; -- 가나다라123
 -- 연결연산자 : ||
 
--- 컬럼명끼리 붙이면 어찌될까?
 
+-- 컬럼명 + 문자
+SELECT CONCAT(DEPT_CODE, '-333') FROM EMPLOYEE; -- D9-333
+SELECT CONCAT(JOB_CODE, ' BY S') FROM JOB; -- J1 BY S
+-- 컬럼명 + 컬럼명
+SELECT CONCAT(DEPT_CODE, JOB_CODE) FROM EMPLOYEE; -- D9J1
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -388,8 +428,8 @@ SELECT CEIL(123.456) FROM DUAL; -- 124
 -- 자릿수 지정 불가. 다른 인자값 집어넣으면 에러
 
 -- FLOOR / TRUNC
--- FLOOR : 수학적 내림(배웠던 수학의 내림)
--- TRUNC : 버림. 절삭. 몇번째 자리까지 버리겠다 자릿수 지정가능\
+-- FLOOR : 수학적 내림(배웠던 수학의 내림)     // 자릿수 지정 불가
+-- TRUNC : 버림. 절삭. 몇번째 자리까지 버리겠다 // 자릿수 지정가능
 -- 양수에서의 내림은 다 같고, 음수에서 차이난다. t
 SELECT FLOOR(123.789), TRUNC(123.789), TRUNC(123.789,1) FROM DUAL; -- 123	123	123.7
 -- TRUNC : 몇번째 자리까지 버리겠다 자릿수 지정가능
@@ -423,6 +463,7 @@ SELECT SYSDATE FROM DUAL; -- 22/03/14
 
 -- MONTHS_BETWEEN
 -- 개월수의 차를 숫자로 리턴해주는 함수
+-- ex) MONTHS_BETWEEN(SYSDATE, HIRE_DATE)
 
 -- EMPLOYEE테이블에서 사원의 이름, 입사일, 근무 개월 수 조회
 SELECT EMP_NAME, HIRE_DATE, MONTHS_BETWEEN(SYSDATE, HIRE_DATE) FROM EMPLOYEE; -- 385.283...
@@ -433,6 +474,8 @@ SELECT EMP_NAME, HIRE_DATE, MONTHS_BETWEEN(SYSDATE, HIRE_DATE) FROM EMPLOYEE; --
 SELECT EMP_NAME, HIRE_DATE, CEIL(ABS(MONTHS_BETWEEN(HIRE_DATE, SYSDATE))) || '개월차'
 FROM EMPLOYEE; -- 368개월차
 -- 앞뒤로 뭐가 올지 모른다면 ABS를 넣어서 절대값으로 받아오면 된다
+
+
 
 
 -- ADD_MONTHS
@@ -450,6 +493,10 @@ SELECT EMP_NAME, HIRE_DATE, ADD_MONTHS(HIRE_DATE,6) FROM EMPLOYEE;
 -- 기준 날짜에서 구하려는 요일에 가장 가까운 날짜 리턴
 -- 1=일, 2=월, 3=화,4=수, 5=목, 6=금, 7=토
 -- 텍스트의 맨 앞글자만 따와서 요일 반환
+-- 언어변환
+-- ALTER SESSION SET NLS_LANGUAGE = AMERICAN;
+
+
 
 -- 지금 기준으로부터 가장 가까운 목요일 구하기
 SELECT SYSDATE, NEXT_DAY(SYSDATE, '목요일') FROM DUAL; -- 22/03/15	22/03/17
@@ -488,12 +535,15 @@ SELECT SYSDATE, NEXT_DAY(SYSDATE, '금자탑') FROM DUAL; -- 22/03/15	22/03/18
 -- 해당 날짜의 월의 마지막 일 반환
 SELECT SYSDATE, LAST_DAY(SYSDATE) FROM DUAL; -- 22/03/15	22/03/31
 SELECT LAST_DAY(SYSDATE) FROM DUAL; -- 22/03/31
-
-
+SELECT LAST_DAY(JOB_CODE) FROM EMPLOYEE; -- ERROR
+-- ORA-01841: (full) year must be between -4713 and +9999, and not be 0
+-- 날짜가 아닌 형식 인풋하니 에러
 
 
 -- EXTRACT
--- 년 월, 일 정보 추출 반환
+-- 년, 월, 일 정보 추출 반환
+-- 시간은 추출 불가
+
 
 -- EMPLOYEE테이블에서 사원의 이름, 입사연도, 입사월, 입사일 조회
 SELECT EMP_NAME,EXTRACT(YEAR FROM HIRE_DATE) 입사년도,

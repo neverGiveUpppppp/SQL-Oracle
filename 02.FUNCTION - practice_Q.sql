@@ -6,9 +6,23 @@
 
 함수(FUNCTION)
 
-함수 두 종류
-1.단일 행 함수
-2.그룹 함수
+함수(FUNCTION) 두 종류
+A.단일 행 함수
+B.그룹 함수
+
+A.단일 행 함수
+    1.문자 관련 함수 : LENGTH, INSTR,LPAD,LTRIM,TRIM,SUBSTR, CONCAT,REPLACE
+    2.숫자 관련 함수 : ABS,MOD,ROUND,CEIL,FLOOR/TRUNC
+    3.날짜 관련 함수 : MONTHS_BETWEEN, ADD_MONTHS, NEXT_DAY,LAST_DAT,EXTRACT
+    4.형변환 함수 : TO_CHAR, TO_DATE, TO_NUMBER
+    5.null처리 함수 : NVL, NVL2, NULLIF 
+    6.선택 함수 : DECODE, CASE WHEN THEN
+    
+B.그룹함수
+SUM, AVG, MIN/MAX, COUNT
+
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 
  1.단일 행 함수
@@ -40,17 +54,6 @@ HAVING 절
 ORDER BY 절
 ( 사실상 프론트빼고 다 가능)
 
-1.단일 행 함수
-자바 메소드랑 비슷
- 1)문자 관련 함수
-LENGTH / LENGTHB
-
-2)
-
-
-2.그룹 함수
- 
- 
  
  
 */
@@ -60,6 +63,7 @@ LENGTH / LENGTHB
 -- 1.단일 행 함수
 -- 1)문자 관련 함수
 -- LENGTH / LENGTHB
+-- 인자 : 문자,숫자,특수기호, 컬럼명 
 -- B = BYTE
 -- LENGTH  : 길이
 -- LENGTHB : 글자의 바이트 사이즈 반환 
