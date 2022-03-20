@@ -1,6 +1,26 @@
 
 
 /*
+
+함수(FUNCTION)
+
+함수(FUNCTION) 두 종류
+A.단일 행 함수
+B.그룹 함수
+
+A.단일 행 함수
+    1.문자 관련 함수 : LENGTH, INSTR,LPAD,LTRIM,TRIM,SUBSTR, CONCAT,REPLACE
+    2.숫자 관련 함수 : ABS,MOD,ROUND,CEIL,FLOOR/TRUNC
+    3.날짜 관련 함수 : MONTHS_BETWEEN, ADD_MONTHS, NEXT_DAY,LAST_DAT,EXTRACT
+    4.형변환 함수 : TO_CHAR, TO_DATE, TO_NUMBER
+    5.null처리 함수 : NVL, NVL2, NULLIF 
+    6.선택 함수 : DECODE, CASE WHEN THEN
+B.그룹함수
+SUM, AVG, MIN/MAX, COUNT
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
 <SELECT문의 구조>
 SELECT
 FROM
@@ -27,6 +47,13 @@ ORDER BY : 컬럼명|별칭|컬럼 순번 정렬방식 [NULLS FIRST | LAST]; -> 정렬 조건 기�
 5)SELECT
 6)ORDER BY
 
+<SELECT문 실행순서 및 사용형식>
+1. FROM 테이블명 - 조회 대상 컬럼이 있는 테이블명 기술
+2. WHERE 컬럼명 연산자 조건 - 행을 선택하는 조건을 기술
+3. GROUP BY 컬럼명 } 계산식 - 그룹묶을 컬럼명, 계산식 기술
+4. HAVING 그룹함수 연산자 비교값 - 그룹묶은 값들을 그룹함수로 계산후 선택을 위한 조건기술
+5. SELECT * | [DISTINCT] 컬럼명, 계산식 [AS] 별칭
+6. ORDER BY 컬럼명 | 별칭 | 컬럼순서 [ASC] | DESC
 
 */
 
@@ -323,7 +350,7 @@ ORDER BY JOB_CODE;
 ------------------------------------------------------------------------------
 
 -- UNION : 합집합
--- 두 쿼리를 결과를 하나로 합쳐 AND조건으로 반환
+-- 두 쿼리를 결과를 하나로 합쳐 OR조건으로 반환
 -- 왜 사용? WHERE절에 조건을 다 쓰거나 OR로 처리하기 힘들 경우
 -- UNION 미적용
 SELECT EMP_ID, EMP_NAME

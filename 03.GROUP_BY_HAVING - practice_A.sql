@@ -30,6 +30,7 @@ ORDER BY : 컬럼명|별칭|컬럼 순번 정렬방식 [NULLS FIRST | LAST]; -> 정렬 조건 기�
 
 */
 
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ ORDER BY : 컬럼명|별칭|컬럼 순번 정렬방식 [NULLS FIRST | LAST]; -> 정렬 조건 기�
 --   생략 가능  /   생략 불가
 -- 오름차순에서 NULL은 마지막에 배치
 -- 내림차순에서 NULL은 첫 배치
+-- 별칭,번호로 정렬 가능
 
 SELECT EMP_ID, EMP_NAME, SALARY, DEPT_CODE
 FROM EMPLOYEE
@@ -161,6 +163,7 @@ SELECT FLOOR(AVG(SALARY)),SUM(SALARY), COUNT(*),
 FROM EMPLOYEE
 GROUP BY SUBSTR(EMP_NO,8,1);
 
+
 SELECT FLOOR(AVG(SALARY)),SUM(SALARY), COUNT(*),
         CASE WHEN SUBSTR(EMP_NO,8,1) = 1 THEN '남'
              WHEN SUBSTR(EMP_NO,8,1) = 2 THEN '여'
@@ -169,6 +172,12 @@ SELECT FLOOR(AVG(SALARY)),SUM(SALARY), COUNT(*),
 FROM employee
 GROUP BY SUBSTR(EMP_NO,8,1);
 
+---RE
+SELECT FLOOR(AVG(SALARY)),SUM(SALARY), COUNT(*),
+        DECODE(SUBSTR(EMP_NO,8,1),1,'남','여')
+FROM EMPLOYEE
+GROUP BY SUBSTR(EMP_NO,8,1)
+ORDER BY COUNT(*) DESC;
 
 
 --EMPLOYEE테이블에서 성별과 성별 별 급여 평균(정수처리(보통 내림하라는 의미)), 급여합계, 인원 수 조회(인원수로 내림차순)
@@ -250,6 +259,75 @@ HAVING SUM(SALARY) > 900000
 ORDER BY DEPT_CODE;
 
 ------------------------------------------------------------------------------
+----------------------------------다시풀어보기----------------------------------
+
+--EMPLOYEE테이블에서 성별과 성별 별 급여 평균(정수처리(보통 내림하라는 의미)), 급여합계, 인원 수 조회(인원수로 내림차순)
+-- 데이터에 직접적으로 없는 데이터를 GROUP BY해서 평균,합계,수 조회해야함
+
+SELECT FLOOR(AVG(SALARY)), SUM(SALARY), COUNT(*),
+        DECODE(SUBSTR(EMP_NO,8,1),1,'남','여')
+FROM EMPLOYEE
+GROUP BY SUBSTR(EMP_NO,8,1)
+ORDER BY COUNT(*) DESC; 
+
+SELECT FLOOR(AVG(SALARY)), SUM(SALARY), COUNT(*),
+        CASE WHEN SUBSTR(EMP_NO,8,1)=1 THEN '남'
+             ELSE '여'
+        END 성별
+FROM EMPLOYEE
+GROUP BY SUBSTR(EMP_NO,8,1)
+ORDER BY COUNT(*) DESC; 
+
+-- EMPLOYEE테이블에서 부서 코드별로 같은 직급인 사원의 급여 합계 조회
+-- 부서별, 동 직급별 2개의 그룹핑 필요
+
+SELECT DEPT_CODE, JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, JOB_CODE;
+
+
+-- 1)부서 코드와 급여 3000000이상인 직원의 그룹 별 평균 급여 조회
+-- 2)부서 코드와 급여 평균 3000000이상인 그룹 별 평균급여 조회
+
+SELECT DEPT_CODE, AVG(SALARY)
+FROM EMPLOYEE
+WHERE SALARY >= 3000000
+GROUP BY DEPT_CODE;
+
+SELECT DEPT_CODE, AVG(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, SALARY
+HAVING SALARY >= 3000000;
+
+-- 2)부서 코드와 급여 평균 3000000이상인 그룹 별 평균급여 조회
+SELECT DEPT_CODE, AVG(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+HAVING AVG(SALARY) >= 3000000;
+
+
+---RE
+SELECT DEPT_CODE, AVG(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+HAVING AVG(SALARY) >= 3000000;
+
+-- 부서 별 급여 합계 중 900000을 초과하는 부서코드와 급여 합계 조회
+
+SELECT DEPT_CODE,SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+HAVING SUM(SALARY) > 900000
+ORDER BY DEPT_CODE;
+
+
+---RE
+SELECT DEPT_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+HAVING SUM(SALARY) > 900000;
+
+------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 
@@ -273,11 +351,21 @@ ORDER BY JOB_CODE;
 
 
 --EMPLOYEE테이블에서 각 부서코드마다 직급코드 별 급여 합, 부서 별 급여 합, 총합 조회
+SELECT DEPT_CODE,JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE 
+GROUP BY DEPT_CODE, JOB_CODE
+ORDER BY DEPT_CODE;
 
 
+---RE
+SELECT DEPT_CODE, JOB_CODE,SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, JOB_CODE;
 
 -- ROLLUP
-
+SELECT DEPT_CODE,JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY ROLLUP (DEPT_CODE, JOB_CODE);
 
 -- CUBE
 -- 그룹별 산출한 결과를 집계하는 함수
@@ -319,17 +407,39 @@ ORDER BY JOB_CODE;
 -- 두 쿼리를 결과를 하나로 합쳐 AND조건으로 반환
 -- 왜 사용? WHERE절에 조건을 다 쓰거나 OR로 처리하기 힘들 경우
 -- UNION 미적용
-
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_ID = 200; -- 선동일
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_ID = 201; -- 송종기
 -- UNION 적용
-
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_ID = 200 
+UNION
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_ID = 201; -- 선동일 송종기
 --같은방법
-
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_ID = 200  OR EMP_ID = 201;
 
 
 -- EMPLOYEE테이블에서 DEPT_CODE가 D5이거나 급여가 300000을 초과하는 
 -- 직원의 사번, 이름, 부서코드, 급여조회
-
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D5' OR SALARY = 300000;
 -- UNION 적용
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D5' 
+UNION
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE SALARY = 300000;
 
 
 ------------------------------------------------------------------------------
@@ -339,8 +449,21 @@ ORDER BY JOB_CODE;
 -- INTERSECT : 교집합
 -- 쿼리의 결과와 쿼리의 결과를 하나로 합쳐 OR조건 적용, 결과를 반환
 -- INTERSECT 사용
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D5' 
+INTERSECT
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE SALARY = 300000;
 
-
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D5' 
+INTERSECT
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE SALARY > 300000;
 --집합연산자에서 SELECT 절은 동일해야 되고 FROM절은 달라도 대나요?
 -- 가능
 
