@@ -533,6 +533,7 @@ SELECT SYSDATE, NEXT_DAY(SYSDATE, '금자탑') FROM DUAL; -- 22/03/15	22/03/18
 
 -- LAST_DAY
 -- 해당 날짜의 월의 마지막 일 반환
+--반환값 형식 : 00/00/00
 SELECT SYSDATE, LAST_DAY(SYSDATE) FROM DUAL; -- 22/03/15	22/03/31
 SELECT LAST_DAY(SYSDATE) FROM DUAL; -- 22/03/31
 SELECT LAST_DAY(JOB_CODE) FROM EMPLOYEE; -- ERROR
@@ -549,7 +550,7 @@ SELECT LAST_DAY(JOB_CODE) FROM EMPLOYEE; -- ERROR
 SELECT EMP_NAME,EXTRACT(YEAR FROM HIRE_DATE) 입사년도,
                 EXTRACT(MONTH FROM HIRE_DATE) 입사월, 
                 EXTRACT(DAY FROM HIRE_DATE) 입사일
-FROM EMPLOYEE;
+FROM EMPLOYEE; -- 선동일	1990	2	6
 
 -- EMPLOYEE테이블에서 사원의 이름, 입사일, 근무년수 조회
 -- 단, 근무년수는 현재연도 - 입사연도로 조회
@@ -601,10 +602,18 @@ WHERE ADD_MONTHS(HIRE_DATE, 240) <= SYSDATE;
 
  
 --4.EMPLOYEE테이블에서 사원명, 입사일, 입사한 달의 근무일수 조회
+-- 방법1
+-- LAST_DAY
 SELECT EMP_NAME, HIRE_DATE, LAST_DAY(HIRE_DATE) - HIRE_DATE "입사한 달의 근무일수"
 FROM EMPLOYEE;
 
 SELECT EMP_NAME, HIRE_DATE, (LAST_DAY(HIRE_DATE))-HIRE_DATE "입사한 달 근무일수"
+FROM EMPLOYEE;
+
+-- 방법2
+-- EXTRACT + LAST_DAY
+SELECT EMP_NAME 사원명, HIRE_DATE 입사일, 
+    EXTRACT(DAY FROM LAST_DAY(HIRE_DATE))- EXTRACT(DAY FROM HIRE_DATE) "입사한 달의 근무일수"
 FROM EMPLOYEE;
 
 
@@ -622,16 +631,19 @@ FROM EMPLOYEE;
 -- C) TO_NUMBER
 
 -- A) TO_CHAR : 날짜/숫자형 데이터를 문자형 데이터로 변경
--- B) TO_DATE : 
+-- B) TO_DATE : 문자/숫자형 데이터를 날짜형 데이터로 변환
 -- C) TO_NUMBER : 문자형 데이터를 숫자형 데이터로 변환
 
 
 -- A) TO_CHAR 
 -- 날짜/숫자형 데이터를 문자형 데이터로 변경
 -- 자릿수에 맞춰 문자로 형변환
+-- TO_CHAR(형변환할 날짜or숫자OR컬럼명, 전체자릿수 0 OR 9)
+--      여분공간을 0은 0으로 9는 공백으로
 -- 남은 공백은 왼쪽에 표시
 SELECT 1234 LITERAL_NUMBER FROM DUAL; -- 1234
 SELECT TO_CHAR(1234) FROM DUAL; -- 1234
+SELECT TO_CHAR('1234') FROM DUAL; -- 문자to문자 형변환 가능
 SELECT 1234 LITERAL_NUMBER , TO_CHAR(1234) FROM DUAL; -- 1234	1234
 -- 숫자로 인지되었으면 오른쪽 정렬, 문자로 인지되어있으면 왼쪽 정렬
 -- 글자가 어디에 들어가 있느냐에 따라서 문자인지 숫자인지 구분 가능
@@ -673,6 +685,37 @@ SELECT TO_CHAR(1234,'999') FROM DUAL; -- ####
 SELECT EMP_NAME, TO_CHAR(SALARY, 'L999,999,999')
 --SELECT EMP_NAME, TO_CHAR(SALARY, 'FML999,999,999')
 FROM EMPLOYEE;
+
+
+-- 시간
+SELECT TO_CHAR(SYSDATE, 'HH:MI:SS') FROM DUAL; -- 03:40:27
+SELECT TO_CHAR(SYSDATE, 'AM:HH:MI:SS') FROM DUAL; -- 오후:03:41:01
+SELECT TO_CHAR(SYSDATE, 'PM:HH:MI:SS') FROM DUAL; -- 오후:03:41:43
+SELECT TO_CHAR(SYSDATE, 'AM:HH24:MI:SS') FROM DUAL; -- 오후:15:42:38
+SELECT TO_CHAR(SYSDATE, 'HH24:MI:SS') FROM DUAL;    -- 15:43:02
+-- 날짜
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD') FROM DUAL;      --22-03-20
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD DAY') FROM DUAL;  -- 22-03-20 일요일
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD DAY HH:MI:SS') FROM DUAL; -- 22-03-20 일요일 03:46:52
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD DAY HH:MI:SS') FROM DUAL; -- 2022-03-20 일요일 03:48:07
+SELECT TO_CHAR(SYSDATE, 'YYYY-FMMM-DD DAY HH:MI:SS') FROM DUAL; --2022-3-20 일요일 3:48:47 공백제거
+SELECT TO_CHAR(SYSDATE, 'YYYY-FMMM-DD DAY AM HH:MI:SS') FROM DUAL; -- 2022-3-20 일요일 오후 3:50:0
+-- 다른방식
+SELECT TO_CHAR(SYSDATE, 'YYYY') FROM DUAL;  -- 2022
+SELECT TO_CHAR(SYSDATE, 'YY') FROM DUAL;    -- 22
+SELECT TO_CHAR(SYSDATE, 'MM') FROM DUAL;    -- 03
+SELECT TO_CHAR(SYSDATE, 'MONTH') FROM DUAL; -- 3월
+SELECT TO_CHAR(SYSDATE, 'MON') FROM DUAL;   -- 3월
+SELECT TO_CHAR(SYSDATE, 'RM') FROM DUAL;    -- III 
+SELECT TO_CHAR(SYSDATE, 'YY-MONTH-RM') FROM DUAL; -- 22-3월 -III 
+SELECT TO_CHAR(SYSDATE, 'YY MONTH RM') FROM DUAL; -- 22 3월  III 
+SELECT TO_CHAR(SYSDATE, 'Q'),   -- Q : 분기를 나타냄. 1-4분기
+       TO_CHAR(SYSDATE, 'DAY'), -- DAY : 요일
+       TO_CHAR(SYSDATE, 'DY')   -- DY : 요일
+FROM DUAL;
+SELECT TO_CHAR(SYSDATE, 'Q DAY DDD') FROM DUAL; -- 1 일요일 079
+
+
 SELECT TO_CHAR(SYSDATE) FROM DUAL;                  -- 22/03/15
 SELECT TO_CHAR(SYSDATE, 'HH:MI:SS') FROM DUAL;      -- 08:07:45
 SELECT TO_CHAR(SYSDATE, 'AM:HH:MI:SS') FROM DUAL;   -- 오후:08:08:07
@@ -701,11 +744,10 @@ SELECT TO_CHAR(SYSDATE,'MM'), TO_CHAR(SYSDATE,'MONTH'),
 FROM DUAL;  -- 03	3월 	3월 	III 
 
 
-SELECT TO_CHAR(SYSDATE,'DDD'), -- 한달을 기준으로 몇일이 지나있는가
-    TO_CHAR(SYSDATE,'DD'), -- 주를 기준으로 몇일이 지나있는가
-    TO_CHAR(SYSDATE,'D') -- 한 해를 기준으로 몇일이 지나있는가
-FROM DUAL; -- 074	15	3
- 
+SELECT TO_CHAR(SYSDATE, 'DDD'), -- 한 해를 기준으로 몇일이 지나있는가
+       TO_CHAR(SYSDATE, 'DD'),  -- 한 달을 기준으로 몇일이 지나있는가
+       TO_CHAR(SYSDATE, 'D')    -- 한 주를 기준으로 몇일이 지나있는가(일요일 기준)
+FROM DUAL; -- 079	20	1
 SELECT TO_CHAR(SYSDATE,'Q'), TO_CHAR(SYSDATE,'DAY'), TO_CHAR(SYSDATE,'DY')
 FROM DUAL;
 -- Q : 분기를 나타냄. 1-4분기
@@ -789,17 +831,55 @@ FROM DUAL; -- 20980630	19980630	20140918	20140918
 --     두자리 연도가 50미만일 때, 현재 세기(21세가, 20XX) 적용
 
 
+------ 정리 ------
+
+-- 문자 -> 날짜
+SELECT TO_DATE('20220320','YYYYMMDD') FROM DUAL; -- 22/03/20 
+-- 숫자 -> 날짜
+SELECT TO_DATE(20220320, 'YYYYMMDD') FROM DUAL;  -- 22/03/20
+
+-- 데이트는 시간까지 보여주지 않는다. 타임스탬프 써야함
+-- TO_DATE + TO_CHAR
+-- 년,월,일,시간 같은 것들을 붙일려면 TO_CHAR로 감싼다
+SELECT TO_CHAR(TO_DATE(20220320,'YYYYMMDD'), 'YYYY"년" MM"월" DD"일"')
+FROM DUAL; -- 2022년 03월 20일
+SELECT TO_DATE('220713 215005','YYMMDD HH24MISS')
+FROM DUAL; -- 22/07/13 // 시간 출력 X
+SELECT TO_CHAR(TO_DATE('220713 215005','YYMMDD HH24MISS'), 'YY/MM/DD AM HH:MI:SS DY')
+FROM DUAL; -- 22/07/13 오후 09:50:05 수
+SELECT TO_CHAR(TO_DATE('220713 175019','YYMMDD HH24MISS'), 'YY-MM-DD AM FMHH:MI:SS DY')
+FROM DUAL; -- 22-07-13 오후 5:50:19 수
+
+
+-- Y와 R의 차이
+-- TO_DATE()로만으로는 차이가 없어보인다. TO_DATE()+TO_CHAR()는?
+SELECT TO_DATE('000320','YYMMDD'), -- 00/03/20
+       TO_DATE('000320','RRMMDD'), -- 00/03/20
+       TO_DATE('450625','YYMMDD'), -- 45/06/25
+       TO_DATE('450625','RRMMDD')  -- 45/06/25
+FROM DUAL;
+SELECT TO_CHAR(TO_DATE('900320','YYMMDD'),'YYYY/MM/DD'), -- 2090/03/20
+       TO_CHAR(TO_DATE('900320','RRMMDD'),'YYYY/MM/DD'), -- 1990/03/20
+       TO_CHAR(TO_DATE('450625','YYMMDD'),'YYYY/MM/DD'), -- 2045/06/25
+       TO_CHAR(TO_DATE('450625','RRMMDD'),'YYYY/MM/DD')  -- 2045/06/25
+FROM DUAL;
+
+
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 
 -- C) TO_NUMBER
 -- 문자형 데이터를 숫자형 데이터로 변환
+-- TO_NUMBER(변환할 컬럼or문자,'들어온 데이터형식 인식시키는기준')
+-- TO_NUMBER('10,000','999,999')
 
 SELECT '1234' CHAR_NUMBER, TO_NUMBER('1234') FROM DUAL;
+-- 문자는 왼쪽정렬, 숫자는 오른쪽 정렬
 
 -- CHAR + CHAR 숫자 연산 가능한데 왜 굳이 NUMBER연산해야할까?
---
+-- TO_NUMBER()의 필요성
 SELECT '1234'+'4321' FROM DUAL; -- 5555
 SELECT '10,000' + '5,000' FROM DUAL; -- ERROR : invalid number
  -- 쉼표 때문에 에러. 사람이 인식하기에 ,는 숫자 자릿수 구분이지만
@@ -810,7 +890,12 @@ SELECT TO_NUMBER('10,000','999,999') FROM DUAL; -- 10000
 SELECT TO_NUMBER('10,000','999,999'), TO_NUMBER('5,000','999,999') FROM DUAL;--10000	5000
 SELECT TO_NUMBER('10,000','999,999') + TO_NUMBER('5,000','999,999') FROM DUAL;--15000
 
-
+-- 2번인자 에러
+SELECT TO_NUMBER('5000','999,999') + TO_NUMBER('5000','999,999')
+FROM DUAL; -- ORA-01722: invalid number
+           -- 에러원인 : 셋째자리에 ,받기로 했는데 ,이 없어서 에러
+SELECT TO_NUMBER('5,000','999,999') + TO_NUMBER('5,000','999,999')
+FROM DUAL; -- 10000
 
 
 
@@ -844,14 +929,21 @@ SELECT EMP_NAME, DEPT_CODE, NVL(DEPT_CODE, '부서가 없습니다') FROM EMPLOYEE;
 
 -- NVL2
 -- NVL2(컬럼명, NULL이면 이걸로 변경, NULL이 아니면 이걸로 변경)
--- NULL값이 존재한다면 두번쨰 인자값으로 변경, NULL값이 존재하지 않으면 세번쨰 인자값으로 변경
+-- NULL값이 존재한다면 두번째 인자값으로 변경, NULL값이 존재하지 않으면 세번째 인자값으로 변경
 SELECT EMP_NAME, BONUS, NVL2(BONUS, 0.7, 0.5) FROM EMPLOYEE;
 -- 해당데이터가 NULL이면 0.7로 아니면 0.5로 대체
+SELECT NVL2(BONUS, 0, 100) FROM EMPLOYEE;
+SELECT NVL2(BONUS, 50, 100,) FROM EMPLOYEE;
 
 
 -- NULLIF
 -- 비교하는 값이 같으면 NULL, 다르면 앞에 있는 값 반환
 SELECT NULLIF(123,123), NULLIF(123,132) FROM DUAL; -- (NULL)	123
+
+SELECT NULLIF(123,123) FROM DUAL; -- 두 비교값이 같아 NULL반환
+-- 데이터(컬럼명) 적용
+SELECT EMP_NAME, NULLIF(EMPLOYEE.JOB_CODE, JOB.JOB_CODE) FROM EMPLOYEE, JOB;
+
 
 
 

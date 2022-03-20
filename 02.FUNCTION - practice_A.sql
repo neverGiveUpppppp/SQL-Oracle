@@ -642,28 +642,58 @@ FROM EMPLOYEE; -- 선동일	90/02/06	22/03/19	32
 --1.EMPLOYEE테이블에서 사원명, 입사일-오늘, 오늘-입사일 조회
 -- 단, 별칭은 근무일수1, 근무일수2로 하고 모두 정수처리(내림)와 양수로 처리
 -- 절삭이 아니라 내림이라 FLOOR. TRUNC는 절삭이고 FLOOR는 수학적 내림
+SELECT EMP_NAME, FLOOR(ABS(HIRE_DATE - SYSDATE)) 근무일수1, 
+                FLOOR(ABS(SYSDATE - HIRE_DATE)) 근무일수2
+FROM EMPLOYEE;
 
+SELECT EMP_NAME, ABS(FLOOR(HIRE_DATE - SYSDATE)) 근무일수1, FLOOR(SYSDATE - HIRE_DATE) 근무일수2 
+FROM EMPLOYEE;  
+
+SELECT EMP_NAME, FLOOR(ABS(HIRE_DATE - SYSDATE)) 근무일수1, FLOOR(ABS(SYSDATE - HIRE_DATE)) 근무일수2 
+FROM EMPLOYEE;  
 
 --2.EMPLOYEE테이블에서 사번이 홀수인 직원들의 정보 모두 조회
-
 -- 오라클에서는 % 나머지 연산지 지원X
-
+SELECT *
+FROM EMPLOYEE
+WHERE MOD(EMP_ID,2) = 1;
+--WHERE MOD(EMP_ID,2) != 0;
 
 --3.EMPLOYEE테이블에서 근무년수가 20년 이상인 직원 전체 정보 조회
 -- 방법1
+SELECT *
+FROM EMPLOYEE
+WHERE CEIL(ABS(MONTHS_BETWEEN(SYSDATE, HIRE_DATE)))/12 >=20;
+
+-- MONTHS_BETWEEN 반환값 확인방법
+SELECT EMP_NAME, CEIL(ABS(MONTHS_BETWEEN(HIRE_DATE, SYSDATE)))
+--SELECT EMP_NAME, ABS(MONTHS_BETWEEN(HIRE_DATE, SYSDATE))
+FROM EMPLOYEE
+WHERE CEIL(ABS(MONTHS_BETWEEN(SYSDATE ,HIRE_DATE))) >=20;
 
 -- 방법2
+SELECT *
+FROM EMPLOYEE
+WHERE ABS(MONTHS_BETWEEN(SYSDATE, HIRE_DATE))/12 >=20;
 
 -- 방법3
-
+SELECT * FROM EMPLOYEE
+WHERE MONTHS_BETWEEN(SYSDATE, HIRE_DATE)>=240;
 -- 방법4
-
+SELECT *  FROM EMPLOYEE
+WHERE (SYSDATE - HIRE_DATE) >= 365*20;
 -- 방법5
-
+SELECT *
+FROM EMPLOYEE
+WHERE ADD_MONTHS(HIRE_DATE,240) <= SYSDATE;
  
 --4.EMPLOYEE테이블에서 사원명, 입사일, 입사한 달의 근무일수 조회
+SELECT EMP_NAME 사원명, HIRE_DATE 입사일, 
+    EXTRACT(DAY FROM LAST_DAY(HIRE_DATE))- EXTRACT(DAY FROM HIRE_DATE) "입사한 달의 근무일수"
+FROM EMPLOYEE;
 
-
+SELECT EMP_NAME, HIRE_DATE, LAST_DAY(HIRE_DATE) - HIRE_DATE
+FROM EMPLOYEE;
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -678,33 +708,44 @@ FROM EMPLOYEE; -- 선동일	90/02/06	22/03/19	32
 -- C) TO_NUMBER
 
 -- A) TO_CHAR : 날짜/숫자형 데이터를 문자형 데이터로 변경
--- B) TO_DATE : 
+-- B) TO_DATE : 문자/숫자형 데이터를 날짜형 데이터로 변환
 -- C) TO_NUMBER : 문자형 데이터를 숫자형 데이터로 변환
 
 
 -- A) TO_CHAR 
 -- 날짜/숫자형 데이터를 문자형 데이터로 변경
 -- 자릿수에 맞춰 문자로 형변환
--- 남은 공백은 왼쪽에 표시
+-- TO_CHAR(형변환할 날짜or숫자OR컬럼명, 전체자릿수 0 OR 9)
+--      여분공간을 0은 0으로 9는 공백으로
+    -- 남은 공백은 왼쪽에 표시
 SELECT 1234 LITERAL_NUMBER FROM DUAL; -- 1234
+SELECT 12345 LITERAL_NUMBER FROM DUAL;
 SELECT TO_CHAR(1234) FROM DUAL; -- 1234
+SELECT TO_CHAR('1234') FROM DUAL; -- 문자to문자 형변환 가능
 SELECT 1234 LITERAL_NUMBER , TO_CHAR(1234) FROM DUAL; -- 1234	1234
+SELECT 1234 "   숫자   ", TO_CHAR(1234) "   문자   " FROM DUAL;
 -- 숫자로 인지되었으면 오른쪽 정렬, 문자로 인지되어있으면 왼쪽 정렬
 -- 글자가 어디에 들어가 있느냐에 따라서 문자인지 숫자인지 구분 가능
 
+SELECT 369 + 963, TO_CHAR(369)+TO_CHAR(963) FROM DUAL; -- 1332
 SELECT 1234+4321, TO_CHAR(1234)+TO_CHAR(4321) FROM DUAL; -- 5555	5555 
 -- 문자인데 연산이 가능한 이유 : 숫자로 형변환에 문제 없는 문자는 오라클에서 자동으로 연산해줌
 -- 문자 연산 가능 // 자바에선 불가능
 
+SELECT TO_CHAR(2222, '999999') FROM DUAL;  --    2222//
+SELECT TO_CHAR(2222, '000000') FROM DUAL;  --  002222//
+SELECT TO_CHAR(2222, '111111') FROM DUAL;  --  ERROR:ORA-01481: invalid number format model
 SELECT TO_CHAR(1234, '99999') FROM DUAL;   --  (공백)1234
 SELECT TO_CHAR(1234, '99999') A FROM DUAL; --  (공백)1234
 -- '99999'의 의미는 5칸을 만들겠다. 여기에 1234를 넣고 빈 공간은 공백으로 하겠다는 의미
--- ' ' 안에는 9와 0만 가능. 다른 숫자는 에러
+-- ' ' 안에는 9와 0만 가능. 다른 숫자는 에러 
 SELECT TO_CHAR(1234, '99') A FROM DUAL;    -- ###
 SELECT TO_CHAR(1234, '88') A FROM DUAL;    -- ERROR
 SELECT TO_CHAR(1234,'00000') A FROM DUAL;  -- 01234
 -- 비어있는 곳을 0으로 채워라
 
+
+SELECT TO_CHAR(1234,'$99999') FROM DUAL; --   $1234
 SELECT TO_CHAR(1234,'L99999') FROM DUAL;     --         ￦1234
 -- L을 붙인건 현재 설정된 나라의 원화표시를 붙인 것
 SELECT TO_CHAR(1234,'FML99999') FROM DUAL;   -- ￦1234
@@ -717,18 +758,45 @@ SELECT TO_CHAR(1234,'FM99,999') FROM DUAL;   -- 1,234
 SELECT TO_CHAR(1234,'00,000') FROM DUAL;     --  01,234
 SELECT TO_CHAR(1234,'FM00,000') FROM DUAL;   -- 01,234
 SELECT TO_CHAR(1234,'999') FROM DUAL; -- ####
--- 자릿수가 부족해서 # 출력
+-- 자릿수가 부족해서 ####으로 대체 출력
 
 -- 1234보다 더 적은 자리수를 지정할 경우는?
 -- ##을 이용하면 됨
 
 
 
-
 -- EMPLOYEE테이블에서 사원명, 급여(\(원화표시)9,000,000 형식) 조회
+-- 모범 답안
 SELECT EMP_NAME, TO_CHAR(SALARY, 'L999,999,999')
 --SELECT EMP_NAME, TO_CHAR(SALARY, 'FML999,999,999')
 FROM EMPLOYEE;
+
+
+SELECT EMP_NAME,TO_CHAR(SALARY,'L9,999,999')
+FROM EMPLOYEE; --         ￦8,000,000
+SELECT EMP_NAME,TO_CHAR(SALARY,'L999,999,999') 
+FROM EMPLOYEE; --           ￦8,000,000
+SELECT EMP_NAME,TO_CHAR(SALARY,'FML999,999,999') 
+FROM EMPLOYEE; -- ￦8,000,000
+
+
+-- 시간
+SELECT TO_CHAR(SYSDATE, 'HH:MI:SS') FROM DUAL; -- 03:40:27
+SELECT TO_CHAR(SYSDATE, 'AM:HH:MI:SS') FROM DUAL; -- 오후:03:41:01
+SELECT TO_CHAR(SYSDATE, 'PM:HH:MI:SS') FROM DUAL; -- 오후:03:41:43
+SELECT TO_CHAR(SYSDATE, 'AM:HH24:MI:SS') FROM DUAL; -- 오후:15:42:38
+SELECT TO_CHAR(SYSDATE, 'HH24:MI:SS') FROM DUAL;    -- 15:43:02
+-- 날짜
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD') FROM DUAL;                  --22-03-20
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD DAY') FROM DUAL;              -- 22-03-20 일요일
+SELECT TO_CHAR(SYSDATE, 'YY-MM-DD DAY HH:MI:SS') FROM DUAL;     -- 22-03-20 일요일 03:46:52
+SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD DAY HH:MI:SS') FROM DUAL;   -- 2022-03-20 일요일 03:48:07
+SELECT TO_CHAR(SYSDATE, 'YYYY-FMMM-DD DAY HH:MI:SS') FROM DUAL; --2022-3-20 일요일 3:48:47 공백제거
+SELECT TO_CHAR(SYSDATE, 'YYYY-FMMM-DD DAY AM HH:MI:SS') FROM DUAL; -- 2022-3-20 일요일 오후 3:50:0
+SELECT TO_CHAR(SYSDATE, 'YYYY"년"-MM"월"-DD"일" DAY') FROM DUAL; -- 2022년-03월-20일 일요일 // 리터럴 추가
+SELECT TO_CHAR(SYSDATE, 'YYYY"년"-MM"월"-DD"일" DAY AM HH:MI:SS') FROM DUAL; -- 2022년-03월-20일 일요일 오후 03:55:31
+
+
 SELECT TO_CHAR(SYSDATE) FROM DUAL;                  -- 22/03/15
 SELECT TO_CHAR(SYSDATE, 'HH:MI:SS') FROM DUAL;      -- 08:07:45
 SELECT TO_CHAR(SYSDATE, 'AM:HH:MI:SS') FROM DUAL;   -- 오후:08:08:07
@@ -757,13 +825,31 @@ SELECT TO_CHAR(SYSDATE,'MM'), TO_CHAR(SYSDATE,'MONTH'),
 FROM DUAL;  -- 03	3월 	3월 	III 
 
 
+SELECT TO_CHAR(SYSDATE, 'YYYY') FROM DUAL;  -- 2022
+SELECT TO_CHAR(SYSDATE, 'YY') FROM DUAL;    -- 22
+SELECT TO_CHAR(SYSDATE, 'MM') FROM DUAL;    -- 03
+SELECT TO_CHAR(SYSDATE, 'MONTH') FROM DUAL; -- 3월
+SELECT TO_CHAR(SYSDATE, 'MON') FROM DUAL;   -- 3월
+SELECT TO_CHAR(SYSDATE, 'RM') FROM DUAL;    -- III 
+SELECT TO_CHAR(SYSDATE, 'YY-MONTH-RM') FROM DUAL; -- 22-3월 -III 
+SELECT TO_CHAR(SYSDATE, 'YY MONTH RM') FROM DUAL; -- 22 3월  III 
+SELECT TO_CHAR(SYSDATE, 'DDD'), -- 한 해를 기준으로 몇일이 지나있는가
+       TO_CHAR(SYSDATE, 'DD'),  -- 한 달을 기준으로 몇일이 지나있는가
+       TO_CHAR(SYSDATE, 'D')    -- 한 주를 기준으로 몇일이 지나있는가(일요일 기준)
+FROM DUAL; -- 079	20	1
+SELECT TO_CHAR(SYSDATE, 'Q'),   -- Q : 분기를 나타냄. 1-4분기
+       TO_CHAR(SYSDATE, 'DAY'), -- DAY : 요일
+       TO_CHAR(SYSDATE, 'DY')   -- DY : 요일
+FROM DUAL;
+SELECT TO_CHAR(SYSDATE, 'Q DAY DDD') FROM DUAL; -- 1 일요일 079
+
 SELECT TO_CHAR(SYSDATE,'DDD'), -- 한달을 기준으로 몇일이 지나있는가
     TO_CHAR(SYSDATE,'DD'), -- 주를 기준으로 몇일이 지나있는가
     TO_CHAR(SYSDATE,'D') -- 한 해를 기준으로 몇일이 지나있는가
 FROM DUAL; -- 074	15	3
  
 SELECT TO_CHAR(SYSDATE,'Q'), TO_CHAR(SYSDATE,'DAY'), TO_CHAR(SYSDATE,'DY')
-FROM DUAL;
+FROM DUAL; -- 1	일요일	일
 -- Q : 분기를 나타냄. 1-4분기
 -- DAY : 요일
 -- DY : 요일
@@ -772,6 +858,11 @@ FROM DUAL;
 
 --EMPLOYEE테이블에서 이름, 입사일(2022년 03월 15일 (화) 형식) 조회
 
+SELECT EMP_NAME, TO_CHAR(HIRE_DATE, 'YYYY"년" MM"월" DD"일" (DY)') 
+FROM EMPLOYEE; -- 선동일	1990년 02월 06일 (화)
+
+
+FROM EMPLOYEE;
 
 
 
@@ -789,13 +880,14 @@ FROM DUAL;
 --     두자리 연도가 50미만일 때, 현재 세기(21세기, 20XX) 적용
 
 
+
 SELECT TO_DATE('20220315','YYYYMMDD') FROM DUAL; -- 22/03/15
 SELECT TO_DATE(20220315,'YYYYMMDD') FROM DUAL; -- 22/03/15
 SELECT TO_DATE('20220315','YYYYMMDD') FROM DUAL; -- 22/03/15
 
 -- 입력 받은 문자열 : 20220713을 2022년 07월 13일 형식으로 출력하고 싶다면?
 -- 20220713  -> 2022년 07월 13일
--- 문자열 받는거니 TO_CHAR써서 하면 편하지 않을까? 해서 써보면 에러
+-- 문자열을 받는거니 TO_CHAR써서 하면 편하지 않을까? 해서 써보면 에러
 -- TO_CHAR는 날짜/숫자형 데이터를 문자형 데이터로 변경하는 함수
 -- 아래에서 TO_CHAR()의 첫 매개변수가 숫자가 ' '로 감싸진 문자라서 에러나는 것
 -- 문자+문자 더하기 가능한건? EX)TO_CHAR(1234) + TO_CHAR(4321)
@@ -806,16 +898,16 @@ SELECT TO_CHAR('20220315','YYYY"년" MM"월" DD"일"') --  ERROR : invalid number f
 FROM DUAL;
 -- TO_CHAR()를 쓸려면 '20220315'의 형식 바꿔야함
 -- TO_DATE()로 날짜 데이터를 만듬 : SELECT T0_DATE('20220315','YYYYMMDD')
-SELECT TO_CHAR('20220315','YYYY"년" MM"월" DD"일"') --  ERROR : invalid number format model
-FROM DUAL;
-SELECT TO_CHAR(T0_DATE('20220315','YYYYMMDD'), 'YYYY"년" MM"월" DD"일"') -- ERROR
-FROM DUAL; -- 정답. 디버깅할 것
+
+SELECT TO_CHAR('20220315','YYYY"년" MM"월" DD"일"') 
+FROM DUAL; --  ERROR : invalid number format model
+SELECT TO_CHAR(TO_DATE('20220315','YYYYMMDD'), 'YYYY"년" MM"월" DD"일"')
+FROM DUAL; -- 2022년 03월 15일
 
 
 SELECT TO_CHAR(TO_DATE('220713 175019','YYMMDD HH24MISS'), 'YY-MM-DD AM HH:MI:SS DY')
 FROM DUAL; -- 22-07-13 오후 05:50:19 수
 -- 데이트는 시간까지 보여주지 않는다. 타임스탬프 써야함
-
 
 -- TO_DATE()에서의 연도 표시 : YY, RR
 -- 연도표시를 YY말고도 RR도 가능. 차이는?
@@ -837,14 +929,50 @@ FROM DUAL; -- 20980630	19980630	20140918	20140918
 --     두자리 연도가 50미만일 때, 현재 세기(21세가, 20XX) 적용
 
 
+
+
+-- 문자 -> 날짜
+SELECT TO_DATE('20220320','YYYYMMDD') FROM DUAL; -- 22/03/20 
+-- 숫자 -> 날짜
+SELECT TO_DATE(20220320, 'YYYYMMDD') FROM DUAL;  -- 22/03/20
+
+-- 데이트는 시간까지 보여주지 않는다. 타임스탬프 써야함
+-- TO_DATE + TO_CHAR
+-- 년,월,일,시간 같은 것들을 붙일려면 TO_CHAR로 감싼다
+SELECT TO_CHAR(TO_DATE(20220320,'YYYYMMDD'), 'YYYY"년" MM"월" DD"일"')
+FROM DUAL; -- 2022년 03월 20일
+SELECT TO_DATE('220713 215005','YYMMDD HH24MISS')
+FROM DUAL; -- 22/07/13 // 시간 출력 X
+SELECT TO_CHAR(TO_DATE('220713 215005','YYMMDD HH24MISS'), 'YY/MM/DD AM HH:MI:SS DY')
+FROM DUAL; -- 22/07/13 오후 09:50:05 수
+SELECT TO_CHAR(TO_DATE('220713 175019','YYMMDD HH24MISS'), 'YY-MM-DD AM FMHH:MI:SS DY')
+FROM DUAL; -- 22-07-13 오후 5:50:19 수
+
+
+-- Y와 R의 차이
+-- TO_DATE()로만으로는 차이가 없어보인다. TO_DATE()+TO_CHAR()는?
+SELECT TO_DATE('000320','YYMMDD'), -- 00/03/20
+       TO_DATE('000320','RRMMDD'), -- 00/03/20
+       TO_DATE('450625','YYMMDD'), -- 45/06/25
+       TO_DATE('450625','RRMMDD')  -- 45/06/25
+FROM DUAL;
+SELECT TO_CHAR(TO_DATE('900320','YYMMDD'),'YYYY/MM/DD'), -- 2090/03/20
+       TO_CHAR(TO_DATE('900320','RRMMDD'),'YYYY/MM/DD'), -- 1990/03/20
+       TO_CHAR(TO_DATE('450625','YYMMDD'),'YYYY/MM/DD'), -- 2045/06/25
+       TO_CHAR(TO_DATE('450625','RRMMDD'),'YYYY/MM/DD')  -- 2045/06/25
+FROM DUAL;
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 
 -- C) TO_NUMBER
 -- 문자형 데이터를 숫자형 데이터로 변환
+-- TO_NUMBER(변환할 컬럼or문자,'들어온 데이터형식 인식시키는기준')
+-- TO_NUMBER('10,000','999,999')
 
 SELECT '1234' CHAR_NUMBER, TO_NUMBER('1234') FROM DUAL;
+-- 문자는 왼쪽정렬, 숫자는 오른쪽 정렬
 
 -- CHAR + CHAR 숫자 연산 가능한데 왜 굳이 NUMBER연산해야할까?
 --
@@ -860,8 +988,16 @@ SELECT TO_NUMBER('10,000','999,999') + TO_NUMBER('5,000','999,999') FROM DUAL;--
 
 
 
-
-
+SELECT TO_NUMBER('10,000','000,000') -- ERROR: ORA-01722: invalid number
+FROM DUAL;                      -- 공백을 0으로 채우면 이상해지니 에러나는듯
+SELECT TO_NUMBER('10,000','999,999') -- 10000
+FROM DUAL;
+-- TO_NUMBER+TO_NUMBER의 산술연산
+SELECT TO_NUMBER('5000','999,999') + TO_NUMBER('5000','999,999')
+FROM DUAL; -- ORA-01722: invalid number
+           -- 에러원인 : 셋째자리에 ,받기로 했는데 ,이 없어서 에러
+SELECT TO_NUMBER('5,000','999,999') + TO_NUMBER('5,000','999,999')
+FROM DUAL; -- 10000
 
 
 
@@ -884,21 +1020,31 @@ SELECT TO_NUMBER('10,000','999,999') + TO_NUMBER('5,000','999,999') FROM DUAL;--
 -- NULL을 다른 값으로 인지시키게 못하나?로부터 나오게 됨
 SELECT EMP_NAME, BONUS, NVL(BONUS, 0) 
 FROM EMPLOYEE;
+SELECT NVL(BONUS,0) FROM EMPLOYEE;
+SELECT NVL(BONUS,100) FROM EMPLOYEE;
+SELECT NLV(BONUS, '보너스없음') FROM EMPLOYEE;
+
+
 
 SELECT NVL(BONUS, '보너스X') -- ERROR : : invalid number
 FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 
 -- NVL2
 -- NVL2(컬럼명, NULL이면 이걸로 변경, NULL이 아니면 이걸로 변경)
--- NULL값이 존재한다면 두번쨰 인자값으로 변경, NULL값이 존재하지 않으면 세번쨰 인자값으로 변경
+-- NULL값이 존재한다면 두번째 인자값으로 변경, NULL값이 존재하지 않으면 세번째 인자값으로 변경
 -- 해당데이터가 NULL이면 0.7로 아니면 0.5로 대체
 
+SELECT NVL2(BONUS, 0, 100) FROM EMPLOYEE;
+SELECT NVL2(BONUS, 50, 100,) FROM EMPLOYEE;
+SELECT NVL2(BONUS,0.7,0.5) FROM EMPLOYEE;
 
 -- NULLIF
 -- 비교하는 값이 같으면 NULL, 다르면 앞에 있는 값 반환
 -- (NULL)	123
 
-
+SELECT NULLIF(123,123) FROM DUAL; -- 두 비교값이 같아 NULL반환
+-- 데이터(컬럼명) 적용
+SELECT EMP_NAME, NULLIF(EMPLOYEE.JOB_CODE, JOB.JOB_CODE) FROM EMPLOYEE, JOB;
 
 
 
@@ -915,9 +1061,10 @@ FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 -- JAVA SWITCH 스위치도 딱딱 수가 떨어지는 것만 가능
 
 -- 주민번호 옆에 성별 같이 찍히도록 해볼 것
-
-
-
+SELECT EMP_ID, EMP_NAME, EMP_NO,
+        DECODE(SUBSTR(EMP_NO,8,1),1,'남',2,'여') 성별
+FROM EMPLOYEE;
+        
 
 -- 직원의 급여를 인상하고자 한다
 -- 직급코드가 J7인 직원은 급여의 10%를 인상하고
@@ -926,7 +1073,11 @@ FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 -- 그 외 직급의 직원은 급여의 5%만 인상한다
 -- 직원 테이블에서 직원명, 직급코드, 급여, 인상급여(위 조건)을 조회
 
+SELECT EMP_NAME, JOB_CODE, SALARY, 
+        DECODE(JOB_CODE,'J7',SALARY*1.1,'J6',SALARY*1.15,'J5',SALARY*1.2,SALARY*1.05) 인상급여
+FROM EMPLOYEE;
 
+------------------------------------------------------------------------------
 
 
 -- CASE ~ WHEN ~ THEN
@@ -935,7 +1086,10 @@ FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 --      ELSE 결과값
 -- END
 
-
+-- 주민번호 + 성별 출력
+SELECT EMP_NAME, EMP_NO,
+        DECODE(SUBSTR(EMP_NO,8,1),1,'남',2,'여')
+FROM EMPLOYEE;
 
 
 -- 직원의 급여를 인상하고자 한다
@@ -944,10 +1098,23 @@ FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 -- 직급코드가 J5인 직원은 급여의 20%를 인상하며
 -- 그 외 직급의 직원은 급여의 5%만 인상한다
 -- 직원 테이블에서 직원명, 직급코드, 급여, 인상급여(위 조건)을 조회
-
+SELECT EMP_NAME, JOB_CODE, SALARY,
+        CASE WHEN JOB_CODE = 'J7' THEN SALARY*1.1
+             WHEN JOB_CODE = 'J6' THEN SALARY*1.15
+             WHEN JOB_CODE = 'J5' THEN SALARY*1.2
+             ELSE SALARY*1.05
+        END  "인상급여"
+FROM EMPLOYEE;
 
 -- 위와 같은 코드
 -- CASE 공통된컬럼명 WHEN 조건식 THEN 결과
+SELECT EMP_NAME, JOB_CODE, SALARY,
+        CASE JOB_CODE WHEN 'J7' THEN SALARY*1.1
+                      WHEN 'J6' THEN SALARY*1.15
+                      WHEN 'J5' THEN SALARY*1.2
+                      ELSE SALARY*1.05
+        END "인상급여"
+FROM EMPLOYEE;
 
 
 -- 사번, 사원명, 급여, 등급조회
@@ -955,8 +1122,22 @@ FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 -- DECODE로도 가능?
 -- 범위를 다루는 >,< 같은 것들은 DECODE로 쓸 수 없다
 -- JAVA SWITCH 스위치도 딱딱 수가 떨어지는 것만 가능
+SELECT EMP_ID, EMP_NAME, SALARY,
+        CASE WHEN SALARY> 5000000 THEN '1등급'
+             WHEN SALARY> 3500000 THEN '2등급'
+             WHEN SALARY> 2000000 THEN '3등급'
+             ELSE '4등급'
+        END "등급조회"
+FROM EMPLOYEE;  -- 200	선동일	8000000	1등급
 
-
+-- ERROR : 축약에러
+SELECT EMP_ID, EMP_NAME, SALARY,
+        CASE SALARY WHEN > 5000000 THEN '1등급' -- ERROR : 축약에러
+                    WHEN > 3500000 THEN '2등급' -- ORA-00936: missing expression
+                    WHEN > 2000000 THEN '3등급'
+                    ELSE '4등급'
+        END "등급조회"
+FROM EMPLOYEE;
 
 
 
@@ -975,57 +1156,73 @@ FROM EMPLOYEE; -- ex)bonus의 데이터타입이 number이므로 숫자만가능
 -- 총합계
 -- EMPLOYEE테이블에서 전 사원의 급여 총합
 
-
+SELECT SUM(SALARY) FROM EMPLOYEE;
 
 -- EMPLOYEE테이블에서 남자사원의 급여 총합
-
+SELECT SUM(SALARY)
+FROM EMPLOYEE
+WHERE SUBSTR(EMP_NO,8,1) = 1;
 
 
 -- AVG
 -- 평균
 -- EMPLOYEE테이블에서 전 사원의 급여 평균
  -- 3047662.60869565217391304347826086956522
+ SELECT AVG(SALARY) FROM EMPLOYEE;
  
 -- EMPLOYEE테이블에서 여자사원의 급여 총합
 -- 2542030
-
+SELECT AVG(SALARY)
+FROM EMPLOYEE
+WHERE SUBSTR(EMP_NO,8,1) = 2;
 
 -- EMPLOYEE테이블에서 전 사원의 보너스 평균
 -- BONUS가 NULL인 사원은 0으로 처리
 -- 0.0847826086956521739130434782608695652174
 -- SUM(BONUS)/23
 
+SELECT AVG(NVL(BONUS,0))
+FROM EMPLOYEE;
+
+
 
 
 -- 0.2166666666666666666666666666666666666667
 -- NULL을 가진 값은 평균 계산에서 제외되어 계산
 -- SUM(BONUS)/9
-
+SELECT AVG(BONUS)
+FROM EMPLOYEE; -- 0.2166666666666666666666666666666666666667
+SELECT SUM(BONUS)/9
+FROM EMPLOYEE; -- 0.2166666666666666666666666666666666666667
+SELECT SUM(BONUS)/23
+FROM EMPLOYEE; -- 0.0847826086956521739130434782608695652174
 
 
 -- MIN / MAX
 -- 최소 / 최대
 -- 숫자, 날짜, 문자도 가능
 -- EMPLOYEE테이블에서 최소 급여와 최대 급여
--- 1380000	8000000
-
+-- 8000000	1380000
+SELECT MAX(SALARY), MIN(SALARY) FROM EMPLOYEE; -- 8000000	1380000
 
 
 
 -- 문자 넣기
-
+SELECT MAX(EMP_NAME), MIN(EMP_NAME) FROM EMPLOYEE;
 -- 날짜 넣기
-
+SELECT MAX(HIRE_DATE), MIN(HIRE_DATE) FROM EMPLOYEE;
 
 
 -- COUNT
 -- NULL값은 제외하고 카운트
 -- 23
 -- 직원 23명 카운트함
+SELECT COUNT(*) FROM EMPLOYEE; -- 전체 자료수를 카운트하는 듯
+
 
 -- 21
 -- NULL 2명을 제외한 21 반환
-
+SELECT COUNT(DEPT_CODE) FROM EMPLOYEE;  -- 21
 
 
 
