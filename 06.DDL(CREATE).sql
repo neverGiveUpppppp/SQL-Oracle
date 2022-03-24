@@ -65,6 +65,7 @@ COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '회원 네임'; -- 덮어씀
 
 
 -- CMD에서 작성한 테이블 확인 방법
+-- 작성한 전체 테이블 확인 코드 3가지
 -- 방법1
 SELECT * FROM USER_TABLES; -- 사용자가 작성한 테이블을 확인하는 뷰
 -- 방법2
@@ -95,8 +96,8 @@ DESC MEMBER;
 
 
 */
-
-DESC USER_CONSTRAINTS; -- 사용자가 작성한 제약조건 확인 뷰
+-- 사용자가 작성한 제약조건 확인 뷰 2가지
+DESC USER_CONSTRAINTS; 
 
 SELECT * FROM USER_CONSTRAINTS;
 
@@ -512,7 +513,7 @@ WHERE GRADE_CODE = 10;
 
 -- CHECK
 -- 
--- 
+-- 데이터 값의 범위나 조건을 지정해 설정한 값만 허용
 
 CREATE TABLE USER_CHECK(
     USER_NO NUMBER PRIMARY KEY,
@@ -626,7 +627,20 @@ FROM EMPLOYEE
 SELECT * FROM EMPLOYE_COPY2;
 
 
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
+-- ALTER
+-- 테이블 수정
+-- 테이블 생성 후 제약조건 뒤에 추가 가능
+
+/*
+ADD UNIQUE(컬럼명);
+ADD PRIMARY KEY(컬럼명);
+ADD FOREIGN KEY(참조받을 자식테이블 컬럼명) REFERENCE**S** 부모테이블명(참조할 컬럼명);
+MODIFY 컬럼명 NOT NULL;
+
+*/
 
 -- 이미 테이블 만든거에 제약조건 뒤에 추가 가능
 -- 삭제 후 재생성인 아닌 추가기능
@@ -648,7 +662,6 @@ ALTER TABLE USER_GRADE4 ADD CONSTRAINT UG4_GC_PK PRIMARY KEY(GRADE_CODE);
 
 
 
-------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 
@@ -685,10 +698,253 @@ COMMIT;
 -- 참조 테이블은 LOCATION, 참조 컬럼은 LOCATION의 기본키
 
 
-
 ALTER TABLE DEPARTMENT ADD FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION;
+ALTER TABLE DEPARTMENT ADD FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION(LOCAL_CODE);
+-- 둘 다 정답
+
 
 ROLLBACK;
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+/*
+DDL(Date Definition language) : 데이터 정의어  - CREATE, ALTER, DROP
+
+DML (Data Manipulation Language) :  데이터 조작어 - INSERT, UPDATE,DELETE,SELECT(DQL)
+
+TCL(Transaction Ccontrol Language) : 트랜잭션 제어 - COMMIT, ROLLBACK
+
+
+
+
+
+INSERT(데이터 삽입), UPDATE(데이터 수정),DELETE(데이터 삭제),SELECT(DQL)
+
+
+-- INSERT
+데이터 삽입 = 행 추가 → 테이블 행 개수 증가
+
+원래 인서트 뒤에 ()가 들어가야함 . 컬럼 지정
+
+*/
+
+INSERT INTO EMPLOYEE(EMP_ID,EMP_NAME,EMP_NO,EMAIL,PHONE,DEPT_CODE,JOB_CODE,
+            SAL_LEVEL, SALARY, BONUS, MANAGER_ID,HIRE_DATE, ENT_YN, ENT_DATE)
+VALUES(900,'강건강','990311-1451201','kang_kk@kh.or.kr','01011112222',
+        'D1','J7','S3',4300000,0.2,200,SYSDATE,'N',NULL);                      
+            
+SELECT * FROM EMPLOYEE;
+
+ROLLBACK;
+
+DELETE
+            
+-- 테이블의 모든 컬럼에 값을 넣을 때는 컬럼명 명시를 생략 가능            
+-- INSERT 시, 컬럼명을 생략하려면 테이블에 있는 컬럼 순서를 정확히 지켜서 넣어야 함
+INSERT INTO EMPLOYEE -- 컬럼명 명시부분 삭제
+VALUES(900,'강건강','990311-1451201','kang_kk@kh.or.kr','01011112222',
+        'D1','J7','S3',4300000,0.2,200,SYSDATE,'N',NULL);            
+-- ORA-01841: (full) year must be between -4713 and +9999, and not be 0
+-- 원인 : ENT_YN,ENT_DATE의 순서를 바꿔서 에러발생
+-- 컬럼명을 명시하는 경우에는 명시한 순서를 따라 데이터를 넣으면 되고, 
+-- 생략 시에는 테이블에 있는 컬럼명 순서을 따라야 한다        
+        
+        
+INSERT INTO EMPLOYEE -- 컬럼명 명시부분 삭제
+VALUES(900,'강건강','990311-1451201','kang_kk@kh.or.kr','01011112222',
+        'D1','J7','S3',4300000,0.2,200,SYSDATE,NULL,'N');          
+        
+SELECT * FROM EMPLOYEE;
+COMMIT;
+     
+
+CREATE TABLE EMP_01(
+    EMP_ID NUMBER,
+    EMP_NAME VARCHAR2(30),
+    DEPT_TITLE VARCHAR2(20)
+);
+
+INSERT INTO EMP_01(EMP_ID,EMP_NAME) VALUES(999,'남나눔'); 
+-- 테이블의 컬럼 전부가 아닌 원하는 데이터만 삽입가능
+SELECT * FROM EMP_01;
+-- 데이터 조회 결과 : 999	남나눔 (NULL) <- DEPT_TITLE에 부서명 안넣어둬서 NULL
+
+-- 서브쿼리로 INSERT하기
+INSERT INTO EMP_01(
+        SELECT EMP_ID, EMP_NAME, DEPT_TITLE
+        FROM EMPLOYEE
+            LEFT JOIN DEPARTMENT ON (DEPT_CODE = DEPT_ID)
+);
+SELECT * FROM EMP_01; -- 25행
+
+
+------------------------------------------------------------------------------
+--참조:5.1. SQL 활용 (자체교재)
+
+
+-- INSERT ALL
+-- INSERT 시 서브쿼리가 사용하는 테이블이 같은 경우 한 번에 삽입 가능
+-- 예시 2개
+
+-- WHEN 절에 지정한 조건을 만족하는 데이터를 테이블을 지정해 삽입
+        
+CREATE TABLE EMP_DEPT_D1
+AS SELECT EMP_ID,EMP_NAME, DEPT_CODE, HIRE_DATE
+    FROM EMPLOYEE
+    WHERE 1 = 0; 
+-- WHERE절 : 조건을 받는 곳. 1 = 0이라는건 1이 0이 아니기에 결과값은 FALSE
+-- 결과값이 FALSE이기에 선택된 컬럼만 있고 데이터는 없는 상태인 것
+-- 즉, WHERE절의 1=0 조건을 만족하는 행이 없으므로, 비어있는 테이블이 생성된다
+-- 이 코드를 쓰는 목적 : 데이터는 필요 없이 구조만 따고 싶을 때
+
+SELECT * FROM EMP_DEPT_D1;
+
+CREATE TABLE EMP_MANAGER
+AS SELECT EMP_ID, EMP_NAME, MANAGER_ID
+    FROM EMPLOYEE
+    WHERE 1 = 0; -- 구조만 따옴
+
+SELECT * FROM EMP_MANAGER;
+
+
+
+-- EMP_DEPT_D1 테이블에 EMPLOYEE 테이블에 있는 부서코드가 D1인 직원을 조회해
+-- 사번, 이름, 소속부서, 입사일 삽입
+-- EMP_MANAGER테이블에 EMPLOYEE 테이블ㅇ 있는 부서코드가 D1인 직원을 조회해
+-- 사번, 이름, 관리자 사번 삽입
+
+INSERT INTO EMP_DEPT_D1(
+            SELECT EMP_ID, EMP_NAME, DEPT_CODE, HIRE_DATE
+            FROM EMPLOYEE
+            WHERE DEPT_CODE = 'D1');
+INSERT INTO EMP_MANAGER(
+            SELECT EMP_ID, EMP_NAME,MANAGER_ID
+            FROM EMPLOYEE
+            WHERE DEPT_CODE = 'D1');
+
+SELECT * FROM EMP_DEPT_D1;
+SELECT * FROM EMP_MANAGER;
+-- 위는 INSERT로 데이터를 각각 넣은 것
+ROLLBACK;
+
+INSERT ALL
+INTO EMP_DEPT_D1 VALUES(EMP_ID, EMP_NAME, DEPT_CODE, HIRE_DATE)
+INTO EMP_MANAGER VALUES(EMP_ID, EMP_NAME,MANAGER_ID)
+    SELECT EMP_ID, EMP_NAME, DEPT_CODE, HIRE_DATE, MANAGER_ID -- 서브쿼리
+    FROM EMPLOYEE
+    WHERE DEPT_CODE = 'D1';
+-- INSERT ALL + SUBQUERY로 위 문제의 두 테이블을 한번에 추가    
+-- INSERT ALL 각 테이블 조건에 맞게 INSERT
+
+
+
+-- EMPLOYEE테이블의 구조를 복사하여 사번, 이름, 입사일, 급여를 기록할 수 있는
+-- 테이블 EMP_OLD와 EMP_NEW 생성
+CREATE TABLE EMP_OLD
+AS SELECT EMP_ID, EMP_NAME, HIRE_DATE, SALARY
+    FROM EMPLOYEE
+    WHERE 1 = 0;
+CREATE TABLE EMP_NEW
+AS SELECT EMP_ID, EMP_NAME, HIRE_DATE, SALARY
+    FROM EMPLOYEE
+    WHERE 1 = 0;
+
+SELECT * FROM EMP_OLD;
+SELECT * FROM EMP_NEW;
+
+
+-- EMPLOYEE테이블의 입사일 기준으로 2000년 1월 1일 이전에 입사한 사원의
+-- 사번, 이름, 입사일, 급여는 EMP_OLD테이블에,
+-- 2000년 1월 1일 이후에 입사한 사원의 사번, 이름, 입사일, 급여는 EMP_NEW테이블에 삽입
+-- 방법1 : 각각 INSERT
+-- 방법2 : INSERT ALL
+
+-- INSERT ALL 방법1
+INSERT ALL -- 두 테이블 조건이 달라서 WHEN을 한번에 묶을 수가 없다
+WHEN HIRE_DATE < '2000/01/01' THEN
+    INTO EMP_OLD VALUES(EMP_ID, EMP_NAME, HIRE_DATE, SALARY)
+WHEN HIRE_DATE >= '2000/01/01' THEN
+    INTO EMP_NEW VALUES(EMP_ID, EMP_NAME, HIRE_DATE, SALARY)
+SELECT EMP_ID, EMP_NAME, HIRE_DATE, SALARY
+FROM EMPLOYEE;
+
+-- INSERT ALL 방법2
+INSERT ALL -- 두 테이블 조건이 달라서 WHEN을 한번에 묶을 수가 없다
+WHEN HIRE_DATE < '2000/01/01' THEN
+    INTO EMP_OLD VALUES(EMP_ID, EMP_NAME, HIRE_DATE, SALARY)
+ELSE -- 조건이 이전 아니면 이후이기에 ELSE처리 가능
+    INTO EMP_NEW VALUES(EMP_ID, EMP_NAME, HIRE_DATE, SALARY)
+SELECT EMP_ID, EMP_NAME, HIRE_DATE, SALARY
+-- SELECT * -- VALUES에서 컬럼명 지정하기 때문에 SELECT * 지정도 문제X
+FROM EMPLOYEE;
+
+
+COMMIT;
+
+
+------------------------------------------------------------------------------
+---------------------------------UPDATE--------------------------------------
+------------------------------------------------------------------------------
+
+
+-- UPDATE
+
+-- 수정
+-- 데이터 수정이라 전체 행에는 변화X
+
+CREATE TABLE DEPT_COPY
+AS SELECT * FROM DEPARTMENT;
+
+SELECT * FROM DEPT_COPY;
+
+
+--DEPT_COPY테이블에서 DEPT_ID가 D9인 행의 DEPT_TITLE을 전략기획팀으로 수정
+UPDATE DEPT_COPY -- 뭘 수정할지?
+SET DEPT_TITLE = '전략기획팀' -- 어떻게 수정할지?
+WHERE DEPT_ID = 'D9';
+-- D9가 총무부에서 전략기획팀으로 변경됨
+
+
+
+------------------------------------------------------------------------------
+
+
+
+
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

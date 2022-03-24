@@ -59,6 +59,7 @@ COMMENT ON COLUMN MEMBER.MEMBER_PWD IS '회원 비밀번호';
 COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '회원 이름'; 
 COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '회원 네임'; -- 덮어씀
 
+COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '회원 이름';
 
 -- CMD에서 작성한 테이블 확인 방법
 -- 방법1
@@ -70,7 +71,8 @@ WHERE TABLE_NAME = 'MEMBER';
 -- 방법3
 DESC MEMBER;
 
-
+SELECT * FROM USER_TABLES;
+DESC USER_CONSTRAINTS;
 
 
 ------------------------------------------------------------------------------
@@ -118,6 +120,8 @@ FOREIGN KEY : 외부 테이블에서 참조해 온 컬럼값이 존재하면 허용
 
 -- 제약조건 테스트 START
 -- 테이블 생성
+
+
 CREATE TABLE USER_NOCONST(
     USER_NO NUMBER,
     USER_ID VARCHAR2(20),
@@ -127,6 +131,7 @@ CREATE TABLE USER_NOCONST(
     PHONE VARCHAR2(30),
     EMAIL VARCHAR2(50)
 );
+
 
 INSERT INTO USER_NOCONST VALUES(1, 'user01', 'pass01', '강건강','남','010-1111-2222','kang@k.k');
 -- 1 행 이(가) 삽입되었습니다.
@@ -222,6 +227,25 @@ INSERT INTO P_USER_UNIQUE2 VALUES(1, 'user01', 'pass01', '강건강','남','010-1111
 -- ORA-00001: unique constraint (KH.SYS_C007049) violated
 -- KH계정의 SYS_C007049 제약조건 위반
 
+
+
+---RE
+CREATE TABLE P_USER_UNIQUE (
+    USER_NO NUMBER NOT NULL,
+    USER_ID VARCHAR(20) UNIQUE,
+    USER_PWD VARCHAR(30),
+    USER_NAME VARCHAR2(30),
+    GENDER VARCHAR2(10),
+    PHONE VARCHAR2(30),
+    EMAIL VARCHAR2(50),
+    UNIQUE(USER_NO)
+);
+INSERT INTO P_USER_UNIQUE VALUES(1, 'user01', 'pass01', '강건강','남','010-1111-2222','kang@k.k');
+
+SELECT * FROM P_USER_UNIQUE;
+SELECT * FROM USER_CONSTRAINTS;
+
+
 CREATE TABLE P_USER_UNIQUE3 (
     USER_NO NUMBER,
     USER_ID VARCHAR2(20),
@@ -241,6 +265,24 @@ INSERT INTO P_USER_UNIQUE3 VALUES(2, 'user01', 'pass01', '강건강','남','010-1111
 -- UNIQUE(USER_NO,USER_ID)에서 USER_NO,USER_ID 둘을 한세트로 보고 
 -- 두 값이 다 같아야 조건이겹치는 걸로 본다.
 
+DROP TABLE P_USER_UNIQUE3 CASCADE CONSTRAINTS;
+
+CREATE TABLE P_USER_UNIQUE4 (
+    USER_NO NUMBER,
+    USER_ID VARCHAR2(20),
+    USER_PWD VARCHAR2(30),
+    USER_NAME VARCHAR2(30),
+    GENDER VARCHAR2(10),
+    PHONE VARCHAR2(30),
+    EMAIL VARCHAR2(50),
+    UNIQUE(USER_NO,USER_ID)
+);
+INSERT INTO P_USER_UNIQUE4 VALUES(1, 'user01', 'pass01', '강건강','남','010-1111-2222','kang@k.k');
+INSERT INTO P_USER_UNIQUE4 VALUES(1, 'user02', 'pass01', '강건강','남','010-1111-2222','kang@k.k');
+
+SELECT * FROM USER_TABLES;
+DROP TABLE P_USER_UNIQUE4;
+DROP TABLE P_USER_UNIQUE4 CASCADE CONSTRAINTS;
 
 ------------------------------------------------------------------------------
 -- < 제약조건 이름짓기>
@@ -257,20 +299,126 @@ CREATE TABLE P_CONS_NAME(
 --    TD1 : 컬럼 이름
 --    NN : (제약조건) NOT NULL 의미
 --    UQ(UK) : (제약조건) UNIQUE
+DROP TABLE P_CONS_NAME CASCADE CONSTRAINTS;
 
 INSERT INTO P_CONS_NAME VALUES('Z','A','B');
 -- 테이블에서 제약조건 탭에 보면 CONSTRAINT_NAME에 이름이 바뀐 것을 확인할 수 있다
 
+CREATE TABLE P_CONS_NAME3 (
+    CTEST1  NUMBER CONSTRAINTS PCN_CT1_NN NOT NULL,
+    CTEST2 VARCHAR2(10) CONSTRAINTS PCN_CT2_UQ UNIQUE,
+    CTEST3 VARCHAR2(20)
+);
+SELECT * FROM USER_CONSTRAINTS;
+
+DROP TABLE P_CONS_NAME3 CASCADE CONSTRAINTS;
+
 ------------------------------------------------------------------------------
 
 
+-- PRIMARY KEY
+
+-- PRIMARY KEY : NOT NULL + UNIQUE -> 고유 식별자 역할
+-- 컬럼레벨, 테이블레벨 둘 다 설정가능
+-- NOT NULL + UNIQUE -> **고유 식별자 역할**
+-- 한 테이블 당 한번만 설정 가능
+--    (고유 식별자는 고유한거니 하나만 가능. 컬럼마다 있다면 고유식별 불가능해지니)
 
 
+CREATE TABLE P_U_PK(
+     USER_NO NUMBER CONSTRAINT PUP_N_PK PRIMAY KE,
+     USER_ID VARCHAR2(20),
+     USER_PWD VARCHAR2(10)
+    );
+
+CREATE TABLE PK(
+     USER_NO NUMBER ,
+     USER_ID VARCHAR2(20),
+     USER_PWD VARCHAR2(10),
+    CONSTRAINT PK PRIMARY KEY(USER_NO,USER_ID)
+);     
+
+DROP TABLE PK CASCADE CONSTRAINTS;
+
+------------------------------------------------------------------------------
 
 
+-- FOREIGN KEY 
+-- 참조
+-- 외부 테이블에서 참조해 온 컬럼. 이 컬럼값이 존재하면 허용
+-- 테이블 레벨, 컬럼 레벨 둘 다 설정가능
+
+-- 부모테이블 : 참조 당하는 테이블
+-- 자식테이블 : 참조하는 테이블
+
+CREATE TABLE A (
+    AA NUMBER PRIMARY KEY,
+    BB VARCHAR2(30) NOT NULL
+);
+INSERT INTO A VALUES(10, 'A');
+INSERT INTO A VALUES(20, 'B');
+
+CREATE TABLE B(
+    CC NUMBER PRIMARY KEY,
+    DD VARCHAR2(30) UNIQUE,
+    AA NUMBER NOT NULL,
+    CONSTRAINT B_EE_FK FOREIGN KEY(AA) REFERENCES A(AA) ON DELETE SET NULL
+);                                                   -- OM DELETE CASCADE
+INSERT INTO B VALUES(1,'A',1);
+
+-- <제약조건이 걸려있어도 삭제할 수 있는 방법>
+-- ON DELETE SET NULL
+-- 부모 키 삭제 시 자식 키를 NULL로 변경
+
+-- ON DELETE CASCADE
+-- 부모 키 삭제 시, 자식 키도 함께 삭제
 
 
+------------------------------------------------------------------------------
+-- CHECK
+-- 
+-- 데이터 값의 범위나 조건을 지정해 설정한 값만 허용
 
+CREATE TABLE UC(
+    USER_NO NUMBER PRIMARY KEY,
+    USER_ID VARCHAR2(20) UNIQUE,
+    USER_PWD VARCHAR2(30) NOT NULL,
+    USER_NAME VARCHAR2(30),
+    GENDER VARCHAR2(10) CHECK(GENDER IN('남','여'))
+);
+INSERT INTO UC VALUES(1,'A','AA','AAA','남');
+INSERT INTO UC VALUES(2,'B','BB','BBB','M');
+-- 남OR여만 들어가게 되었어 제약조건에 걸려 에러
 
+-- 코멘트(설명) 달기
+COMMENT ON COLUMN UC.USER_NO IS '회원번호';
+COMMENT ON COLUMN UC.USER_ID IS '회원아이디';
 
+------------------------------------------------------------------------------
+
+-- SUBQUERY를 이용한 테이블 생성
+
+CREATE TABLE P_EC
+AS SELECT * FROM EMPLOYEE;
+
+SELECT * FROM P_EC;
+
+CREATE TABLE P_EC2
+AS SELECT * 
+FROM EMPLOYEE
+    LEFT OUTER JOIN DEPARTMENT ON(DEPT_CODE = DEPT_ID)
+    JOIN JOB USING(JOB_CODE);
+
+SELECT * FROM P_EC2;
+DROP TABLE P_EC2;
+
+ALTER TABLE P_EC ADD PRIMARY KEY(EMP_ID);
+ALTER TABLE P_EC ADD UNIQUE(EMP_NAME);
+ALTER TABLE P_EC ADD CONSTRAINT PEC_EN_UQ UNIQUE(EMP_NO);
+ALTER TABLE P_EC MODIFY 
+------------------------------------------------------------------------------
+-- DEPARTMENT 테이블의 LOCATION_ID에 외래키 제약조건 추가
+-- 참조 테이블은 LOCATION, 참조 컬럼은 LOCATION의 기본키
+
+ALTER TABLE DEPARTMENT ADD FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION(LOCATION);
 
