@@ -179,8 +179,8 @@ SALARY 3500000
 
 DECLARE
     E EMPLOYEE%ROWTYPE; -- 앞에 타입에 맞는 변수명을 기술
-BEGIN                   -- EMP 한행 다 들어간 레퍼런스
-    SELECT * INTO E     -- E : 별칭처리 됨?=======================
+BEGIN                   -- EMPLOYEE 한행 다 들어간 레퍼런스
+    SELECT * INTO E     -- E : 변수명
     FROM EMPLOYEE
     WHERE EMP_ID = '&사번';
     
@@ -385,7 +385,7 @@ BEGIN
     END IF;
     
     DBMS_OUTPUT.PUT_LINE(VEMP.SALARY || ' ' || VEMP.EMP_NAME || ' ' ||
-                         TO_CHAR(YSALARY, 'FML999,999,999'));  
+                         TO_CHAR(YSALARY, 'FML999,999,999'));  -- FM : 공백제거 // L : 시스템설정 국가의 화폐단위
 END;
 /
 
@@ -429,25 +429,260 @@ END;
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
+-- CASE~ WHEN~ THEN~ END(SWITCH문)
+
+-- 프로그램 재실행 후 프린트만 찍히고 다른 내용들이 안나온다면,
+-- SET SERVEROUTPUT ON; 코드 찍어주고 하면 다 잘나올 것
+
+-- IF문은 THEN마다 세미콜론( ; )이 들어가지만 CASE WHEN THEN END문은 안들어가고 마지막 END에만
+
+
+-- 사원 번호를 입력하여 해당 사원의 사번,이름,부서명 출력
+-- 선언부
+DECLARE -- 변수설정 // 변수 2개
+    EMP EMPLOYEE%ROWTYPE; -- EMPLOYEE테이블의 EMP_ID의 데이터를 참조하겠다
+    DNAME DEPARTMENT.DEPT_TITLE%TYPE;
+-- 실행부
+BEGIN
+    SELECT * INTO EMP    
+    FROM EMPLOYEE
+    WHERE EMP_ID = '&사번';
+-- 방법1
+--    DNAME := CASE
+--                WHEN EMP.DEPT_CODE = 'D1' THEN '인사관리부'
+--                WHEN EMP.DEPT_CODE = 'D2' THEN '회계관리부'
+--                WHEN EMP.DEPT_CODE = 'D3' THEN '마케팅부'
+--                WHEN EMP.DEPT_CODE = 'D4' THEN '국내영업부'
+--                WHEN EMP.DEPT_CODE = 'D5' THEN '해외영업1부'
+--                WHEN EMP.DEPT_CODE = 'D6' THEN '해외영업2부'
+--                WHEN EMP.DEPT_CODE = 'D7' THEN '해외영업3부'
+--                WHEN EMP.DEPT_CODE = 'D8' THEN '기술지원부'
+--                WHEN EMP.DEPT_CODE = 'D9' THEN '총무부'
+--                ELSE '배정X'
+--            END;
+-- 방법2
+    DNAME := CASE EMP.DEPT_CODE
+                WHEN 'D1' THEN '인사관리부'
+                WHEN 'D2' THEN '회계관리부'
+                WHEN 'D3' THEN '마케팅부'
+                WHEN 'D4' THEN '국내영업부'
+                WHEN 'D5' THEN '해외영업1부'
+                WHEN 'D6' THEN '해외영업2부'
+                WHEN 'D7' THEN '해외영업3부'
+                WHEN 'D8' THEN '기술지원부'
+                WHEN 'D9' THEN '총무부'
+                ELSE '배정X'
+            END;
+    DBMS_OUTPUT.PUT_LINE(EMP.EMP_ID||' '||EMP.EMP_NAME||' ' ||DNAME);
+    
+END;
+/
+
+------------------------------------------------------------------------------
+--------------------------------------반복문-----------------------------------
+------------------------------------------------------------------------------
+
+-- 반복문
+
+
+-- BASIC LOOP
+-- LOOP ~ END LOOP;
+-- 반복할 내용을 작성하고 마지막에 반복을 벗어날 조건 명시
+-- FOR문과 다르게 단순 반복만
+
+
+-- 1~5까지 순차적 출력
+DECLARE
+    N NUMBER := 1; -- 값 초기화
+BEGIN
+    LOOP
+        DBMS_OUTPUT.PUT_LINE(N);
+        N := N + 1;         -- i+1처럼 값 증가
+-- 방법1        
+--        IF N > 5 THEN EXIT; -- 반복문 종료 조건
+--        END IF;
+-- 방법2
+        EXIT WHEN N > 5;    -- 반복문 종료 조건
+    END LOOP;
+END;
+/
+-- 1~5까지 세로로 정상출력됨
 
 
 
+-- 반복 종료 방법 2가지
+/*
+-- 방법1        
+IF N > 5 THEN EXIT; -- 반복문 종료 조건
+END IF;
+-- 방법2
+EXIT WHEN N > 5;
+*/
+------------------------------------------------------------------------------
+
+-- FOR LOOP
+
+-- 특별한 목적이 있지 않는 이상 DECLARE 선언부가 필요X
+-- 가데이터를 넣어서 미리 돌려보기 위해 FOR LOOP을 써서 가데이터를 많이 넣는데 사용한다
+
+-- 1~5까지 순차적 출력
+BEGIN
+    FOR N IN 1..5   -- 의미 1부터 5까지 // .. 2개 점 3개쓰며 에러발생
+    LOOP            --  N은 자동적으로 NUMBER타입의 변수 설정됨
+        DBMS_OUTPUT.PUT_LINE(N);
+    END LOOP;
+END;
+/
+
+-- 5~1까지 출력
+BEGIN
+    FOR N2 IN REVERSE 5..1  -- 기본적으로 앞 숫자가 작아야 FOR문이 돌게된다. 
+    LOOP                    -- REVERSE 붙일 것
+        DBMS_OUTPUT.PUT_LINE(N2);
+    END LOOP;
+END;
+/
+-- REVERSE 추가 전 FOR N2 IN 5..1로만 출력하면,
+-- PL/SQL 프로시저가 성공적으로 완료되었습니다. 뜨지만 아무것도 안뜬다
+
+-- 현업 사용 예시
+-- 가데이터 넣기
+BEGIN
+    FOR N IN 1..30   
+    LOOP            
+        INSERT INTO TB1 VALUES(I); -- -- 가데이터 넣기
+    END LOOP;
+END;
+/
+
+------------------------------------------------------------------------------
+
+-- WHILE LOOP
+
+-- 변수 값 초기화 시, 덮어쓰기 가능
+-- ex)위에 코드에서 N 이미 사용했지만 아래서 다시 값 초기화해서 사용됨
+
+-- 1~5까지 순차적 출력
+DECLARE
+    N NUMBER := 1; -- 값 초기화
+BEGIN
+    WHILE N <= 5
+    LOOP
+        DBMS_OUTPUT.PUT_LINE(N);
+        N := N + 1;     -- N + 1의 LOOP 안 위치 중요. 기억!
+    END LOOP;
+END;
+/
+
+-- 5~1까지 출력
+DECLARE
+    N NUMBER := 5; -- 값 초기화
+BEGIN
+    WHILE N >= 1
+    LOOP
+        DBMS_OUTPUT.PUT_LINE(N);
+        N := N - 1;     -- N - 1의 LOOP 안 위치 중요. 기억!
+    END LOOP;
+END;
+/
+
+
+-- 구구단 출력
+-- 짝수 단 출력
+-- 1)WHILE문
+-- 2)FOR문 - WHILE문
+-- 3)WHILE문 - FOR문
+
+-- 1-9단 FOR문 출력
+BEGIN
+    FOR N IN 1..9
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('---'||N||'단---');
+        FOR M IN 1..9
+        LOOP
+            DBMS_OUTPUT.PUT_LINE(N||' x '||M||' = '||N*M );
+        END LOOP;
+    END LOOP;
+END;
+/
+
+-- 짝수 단 출력
+
+
+-- WHILE문
+-- 에러남... 미완성
+DECLARE
+    N NUMBER := 1; -- 값 초기화
+BEGIN
+    WHILE N <= 9
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('---'||N||'단---');
+        
+        DECLARE
+            M NUMBER := 1; -- 값 초기화
+        BEGIN
+            WHILE M <= 9
+            LOOP
+                DBMS_OUTPUT.PUT_LINE(N||' x '||M||' = '||N*M );
+                M := M + 1;
+            END LOOP; 
+            N := N + 1;     -- N + 1의 LOOP 안 위치 중요. 기억!
+    END LOOP;
+END;
+/
+
+COMMIT;
+------------------------------------------------------------------------------
+----------------------------예외 처리(EXCEPTION)--------------------------------
+------------------------------------------------------------------------------
+
+-- 예외 처리(EXCEPTION)
+-- NO_DATA_FOUND : SELECT문이 데이터 행을 반환하지 못할 때
+-- DUP_VAL_ON_INDEX : UNIQUE 제약조건이 들어간 컬럼에 중복 값이 들어갔을 때
+--                      DUPLICATE VALUE ON INDEX
+-- ZERO_DIVIDE : 0으로 나눌 때
+
+
+-- DUP_VAL_ON_INDEX
+BEGIN
+    UPDATE EMPLOYEE
+    SET EMP_ID = '&사번' -- 201 인풋
+    WHERE EMP_ID = 200;
+    -- ERROR : ORA-00001: unique constraint (KH.EMPLOYEE_PK) violated
+    -- 예외처리 해보자
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('이미 존재하는 사번입니다.');
+END;
+/
+
+
+-- NO_DATA_FOUND
+DECLARE
+    NAME VARCHAR2(30);
+BEGIN
+    SELECT EMP_NAME INTO NAME
+    FROM EMPLOYEE
+    WHERE EMP_ID = 0;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('조회 결과가 없습니다');
+END;
+/
+
+
+------------------------------------------------------------------------------
 
 
 
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
 ------------------------------------------------------------------------------
-------------------------------------------------------------------------------
+
+
+
+
 
 
 
