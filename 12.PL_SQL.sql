@@ -547,6 +547,16 @@ END;
 
 -- 현업 사용 예시
 -- 가데이터 넣기
+
+-- 모범 답안
+BEGIN
+    FOR N2 IN REVERSE 1..5  -- 기본적으로 앞 숫자가 작아야 FOR문이 돌게된다. 
+    LOOP                    -- REVERSE 붙일 것
+        DBMS_OUTPUT.PUT_LINE(N2);
+    END LOOP;
+END;
+/
+
 BEGIN
     FOR N IN 1..30   
     LOOP            
@@ -555,6 +565,18 @@ BEGIN
 END;
 /
 
+-- FOR문 조건 안에서 연산가능
+BEGIN
+    FOR N IN 2..8/2 -- FOR문 안에서 연산가능
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('---'||N||'단---');    
+        FOR NN IN 1..9
+        LOOP
+            DBMS_OUTPUT.PUT_LINE(N||' x '||NN||' = '||N*NN);
+        END LOOP;
+    END LOOP;
+END;
+/
 ------------------------------------------------------------------------------
 
 -- WHILE LOOP
@@ -606,30 +628,31 @@ BEGIN
 END;
 /
 
--- 짝수 단 출력
-
-
--- WHILE문
--- 에러남... 미완성
+-- 1-9단 WHILE문 출력
 DECLARE
-    N NUMBER := 1; -- 값 초기화
+    N NUMBER := 1;
+    NN NUMBER := 1;
 BEGIN
     WHILE N <= 9
     LOOP
-        DBMS_OUTPUT.PUT_LINE('---'||N||'단---');
+        DBMS_OUTPUT.PUT_LINE('---'||N||'단---'); 
         
         DECLARE
-            M NUMBER := 1; -- 값 초기화
-        BEGIN
-            WHILE M <= 9
+            NN NUMBER := 1;
+        BEGIN   
+            WHILE NN <= 9
             LOOP
-                DBMS_OUTPUT.PUT_LINE(N||' x '||M||' = '||N*M );
-                M := M + 1;
-            END LOOP; 
-            N := N + 1;     -- N + 1의 LOOP 안 위치 중요. 기억!
+            DBMS_OUTPUT.PUT_LINE(N||' x '||NN||' = '||N*NN);
+            NN := NN + 1;
+            END LOOP;    
+            N := N + 1;
+        END;
     END LOOP;
 END;
 /
+-- 짝수 단 출력
+
+
 
 COMMIT;
 ------------------------------------------------------------------------------
