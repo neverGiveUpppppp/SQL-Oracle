@@ -155,53 +155,183 @@ FROM EMPLOYEE;
 --9. 직원의 급여를 인상하고자 한다. 직급코드가 ‘J7’인 직원은 급여의 10%를 인상하고, 직급코 드가 ‘J6’인 직원은 급여의 15%를 인상하고, 
 -- 직급코드가 ‘J5’인 직원은 급여의 20%를 인상 하며, 그 외 직급의 직원은 급여의 5%만 인상하며, 직원 테이블에서 직원명,  직급코드,  급 여, 인상급여(위 조건)을 조회
 SELECT EMP_NAME, JOB_CODE, SALARY, 
-        DECODE JOB_CODE WHEN 'J7' THEN SALARY*0.1
-               JOB_CODE WHEN 'J6' THEN SALARY*0.15
-               JOB_CODE WHEN 'J5' THEN SALARY*0.2
-               ELSE SALARY*0.05
-        END;
-               
-        '인상급여'
-FROM EMPLOYEE
-WHERE JOB_CODE = 
+        CASE JOB_CODE WHEN 'J7' THEN SALARY*0.1
+                      WHEN 'J6' THEN SALARY*0.15
+                      WHEN 'J5' THEN SALARY*0.2
+                      ELSE SALARY*0.05
+        END 인상급여
+FROM EMPLOYEE;
+SELECT EMP_NAME, JOB_CODE, SALARY, 
+    CASE WHEN JOB_CODE = 'J7' THEN SALARY*1.1
+         WHEN JOB_CODE = 'J6' THEN SALARY*1.15
+         WHEN JOB_CODE = 'J5' THEN SALARY*1.2
+         ELSE SALARY*1.05
+    END 인상급여
+FROM EMPLOYEE;
+
+SELECT EMP_NAME, JOB_CODE, SALARY 월급, 
+        DECODE(JOB_CODE,'J7',SALARY*0.1,
+                        'J6',SALARY*0.15,
+                        'J5',SALARY*0.2,SALARY*0.5) 인상급여
+FROM EMPLOYEE;
+
+                        
 --10. EMPLOYEE 테이블에서    전    사원의    급여    총합    조회
+SELECT SUM(SALARY) FROM EMPLOYEE;
 --11. EMPLOYEE 테이블에서    남자사원의    급여    총합    조회
+SELECT SUM(SALARY)
+FROM EMPLOYEE
+WHERE SUBSTR(EMP_NO,8,1)=1;
 --12. EMPLOYEE 테이블에서    전    사원의    급여    평균    조회
+SELECT AVG(SALARY)
+FROM EMPLOYEE;
 --13. EMPLOYEE 테이블에서 전 사원의 보너스 평균 (단, BONUS가 NULL인 사원은 0으로 처리)
+SELECT AVG(NVL(BONUS,0))
+FROM EMPLOYEE;
 --14. EMPLOYEE 테이블에서    최소    급여와    최대    급여    조회
+SELECT MIN(SALARY), MAX(SALARY)
+FROM EMPLOYEE;
 --15. 부서   코드가   있는    사원    수    (NULL 제외) 조회
---
---
+SELECT COUNT(DEPT_CODE)
+FROM EMPLOYEE;
+SELECT COUNT(DEPT_CODE)
+FROM EMPLOYEE;
+
+
+
+
 --GROUP BY HAVING 문제
 --1. 부서    별   급여    합계    조회
+SELECT SUM(SALARY) 급여합계, DEPT_CODE
+FROM EMPLOYEE
+GROUP BY DEPT_CODE;
 --2. EMPLOYEE 테이블에서 부서, 부서 별 급여 합계, 부서 별 급여 평균, 부서 별 인원 수 조회
+SELECT DEPT_CODE 부서코드, SUM(SALARY)급여합계,/*AVG(SALARY)*/ CEIL(AVG(SALARY))급여평균, COUNT(*) 부서인원수
+FROM EMPLOYEE
+GROUP BY DEPT_CODE;
 --3. EMPLOYEE 테이블에서    부서코드와    보너스    받는    사원    수    조회
+SELECT DEPT_CODE, COUNT(BONUS) "보너스O사원수"
+FROM EMPLOYEE
+GROUP BY DEPT_CODE;
 --4. EMPLOYEE 테이블에서    직급코드와    보너스    받는    사원    수    조회
+SELECT JOB_CODE, COUNT(BONUS) "보너스 사원수"
+FROM EMPLOYEE
+GROUP BY JOB_CODE;
 --5. EMPLOYEE 테이블에서    성별과    성별    별    급여    평균(정수처리(내림)), 급여    합계, 인원    수    조회 (인원    수로   내림차순)
+SELECT DECODE(SUBSTR(EMP_NO,8,1),1,'남','여') 성별, FLOOR(ABS(AVG(SALARY))) "성별 별 급여평균", SUM(SALARY), COUNT(*)
+FROM EMPLOYEE 
+GROUP BY SUBSTR(EMP_NO,8,1)
+ORDER BY COUNT(*) DESC;
 --6. EMPLOYEE 테이블에서    부서    코드별로    같은    직급인    사원의    급여    합계    조회
+SELECT DEPT_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+HAVING DEPT_CODE IN('D1','D2','D3','D4','D5');
+
+SELECT DEPT_CODE, JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, JOB_CODE
+ORDER BY DEPT_CODE;
 --7. 부서    코드와   급여    3000000이상인    직원의    그룹    별    평균    급여    조회
+SELECT DEPT_CODE, AVG(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, SALARY
+HAVING SALARY >= 3000000;
 --8. 부서    코드와   급여    평균    3000000이상인    그룹   별    평균    급여    조회
---9. 부서    별   급여    합계    중    9000000을    초과하는    부서코드와    급여    합계    조회
---10. EMPLOYEE  테이블에서    각    부서    코드마다    직급    코드    별    급여    합,  부서    별    급여    합,  총합 조회
---11. EMPLOYEE  테이블에서    DEPT_CODE가    ‘D5’이거나    급여가    3000000을    초과하는    직원의    사 번, 이름, 부서코드, 급여    조회
---
---
+SELECT  DEPT_CODE, AVG(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE,SALARY
+HAVING AVG(SALARY) >= 3000000;
+--9. 부서 별 급여 합계 중 9000000을 초과하는 부서코드와 급여 합계 조회
+SELECT DEPT_CODE,SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE
+HAVING SUM(SALARY) > 9000000;
+--10.EMPLOYEE테이블에서 각 부서코드마다 직급코드 별 급여 합, 부서 별 급여 합, 총합 조회
+SELECT DEPT_CODE,JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, JOB_CODE 
+ORDER BY DEPT_CODE;
+--11. EMPLOYEE  테이블에서 DEPT_CODE가 ‘D5’이거나 급여가 3000000을 초과하는 직원의 사번, 이름, 부서코드, 급여 조회
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+WHERE DEPT_CODE = 'D5' OR SALARY > 3000000;
+
 --
 --JOIN 문제
---내부    조인(INNER JOIN) : 일치하지    않는    컬럼    값은    제외시킴 1. 사번, 사원   명, 부서코드    조회
---2-1.   사번, 이름, 부서코드, 부서    명    조회(오라클    전용    구문) 2-2.   사번, 이름, 부서코드, 부서    명    조회(ANSI 표준    구문)
---3-1.    사번, 사원    명, 직급    코드, 직급    명    조회(오라클    전용    구문) 3-2.    사번, 사원    명, 직급    코드, 직급    명    조회(ANSI 표준    구문) 4-1.    부서   명과   해당    부서의    지역    명    조회(오라클    전용    구문)
---
---
---
+--내부 조인(INNER JOIN) : 일치하지 않는 컬럼 값은 제외시킴 
+--1. 사번, 사원 명, 부서코드 조회
+SELECT EMP_ID, EMP_NAME, DEPT_CODE FROM EMPLOYEE;
+--2-1.사번, 이름,부서코드, 부서 명 조회(오라클 전용 구문) 
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, DEPT_TITLE
+FROM EMPLOYEE, DEPARTMENT
+WHERE DEPT_CODE = DEPT_ID;
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, DEPT_TITLE
+FROM EMPLOYEE, DEPARTMENT
+WHERE DEPT_CODE = DEPT_ID;
+--2-2.사번, 이름,부서코드, 부서 명 조회(ANSI 표준 구문)
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, DEPT_TITLE
+FROM EMPLOYEE
+    JOIN DEPARTMENT ON(EMPLOYEE.DEPT_CODE = DEPARTMENT.DEPT_ID);
+--3-1.사번, 사원 명, 직급코드, 직급명 조회(오라클 전용구문) 
+SELECT EMP_ID, EMP_NAME, E.JOB_CODE, J.JOB_NAME
+FROM EMPLOYEE E, JOB J
+WHERE E.JOB_CODE = J.JOB_CODE;
+
+SELECT EMP_ID,EMP_NAME, EMPLOYEE.JOB_CODE, JOB.JOB_NAME
+FROM EMPLOYEE, JOB
+WHERE EMPLOYEE.JOB_CODE = JOB.JOB_CODE;
+--3-2.사번, 사원 명, 직급코드, 직급명 조회(ANSI 표준구문) 
+SELECT EMP_ID, EMP_NAME, JOB_CODE, JOB_NAME
+FROM EMPLOYEE E
+    JOIN JOB J USING(JOB_CODE);
+    
+SELECT EMP_ID, EMP_NAME, E.JOB_CODE, J.JOB_NAME
+FROM EMPLOYEE E
+    JOIN JOB J ON(E.JOB_CODE = J.JOB_CODE);
+--4-1.부서   명과   해당    부서의    지역    명    조회(오라클    전용    구문)
+SELECT D.DEPT_TITLE, L.LOCAL_NAME
+FROM DEPARTMENT D, LOCATION L
+WHERE D.LOCATION_ID = L.LOCAL_CODE;
+
+SELECT DEPT_TITLE,LOCAL_NAME
+FROM DEPARTMENT, LOCATION
+WHERE LOCATION_ID = LOCAL_CODE;
 --4-2.    부서   명과   해당    부서의    지역    명    조회(ANSI 표준    구문)
+SELECT DEPT_TITLE, LOCAL_NAME
+FROM DEPARTMENT D
+    JOIN LOCATION L ON(D.LOCATION_ID = L.LOCAL_CODE);
 --5. 오라클    전용    구문    ANSI 표준    구문으로    바꾸기
 --SELECT EMP_NAME, DEPT_TITLE FROM EMPLOYEE, DEPARTMENT WHERE DEPT_CODE = DEPT_ID(+);
+SELECT EMP_NAME, DEPT_TITLE 
+FROM EMPLOYEE E
+    LEFT JOIN DEPARTMENT D ON (E.DEPT_CODE = D.DEPT_ID);
+SELECT EMP_NAME, DEPT_TITLE 
+FROM EMPLOYEE
+    LEFT OUTER JOIN DEPARTMENT ON (DEPT_CODE = DEPT_ID);    
 --6. 오라클    전용    구문    ANSI 표준    구문으로    바꾸기
 --SELECT EMP_NAME, DEPT_TITLE FROM EMPLOYEE, DEPARTMENT WHERE DEPT_CODE(+) = DEPT_ID;
+SELECT EMP_NAME, DEPT_TITLE 
+FROM EMPLOYEE
+    RIGHT OUTER JOIN DEPARTMENT ON (DEPT_CODE = DEPT_ID);
 --7. 오라클    전용    구문에선    FULL [OUTER] JOIN 안    됨. 아래    구문    실행해도    에러    남. 그러니까 밑에    구문을    ANSI 표준으로    바꿔주셈.
 --SELECT EMP_NAME, DEPT_TITLE FROM EMPLOYEE, DEPARTMENT WHERE DEPT_CODE(+) = DEPT_ID(+);
---8-1.   사번, 이름, 부서    코드, 부서    명, 지역    이름(LOCAL_NAME) 조회(오라클    전용    구문) 8-2.   사번, 이름, 부서    코드, 부서    명, 지역    이름(LOCAL_NAME)(ANSI 표준    구문)
+SELECT EMP_NAME, DEPT_TITLE 
+FROM EMPLOYEE
+    FULL OUTER JOIN DEPARTMENT ON (DEPT_CODE = DEPT_ID);
+--8-1.   사번, 이름, 부서    코드, 부서    명, 지역    이름(LOCAL_NAME) 조회(오라클    전용    구문) 
+SELECT EMP_ID,EMP_NAME, DEPT_CODE, DEPT_TITLE,LOCAL_NAME
+FROM EMPLOYEE, DEPARTMENT,LOCATION
+WHERE DEPT_CODE = DEPT_ID
+    AND LOCATION_ID = LOCAL_CODE;
+--8-2.   사번, 이름, 부서    코드, 부서    명, 지역    이름(LOCAL_NAME)(ANSI 표준    구문)
+SELECT EMP_ID, EMP_NAME, DEPT_CODE, DEPT_TITLE, LOCAL_NAME
+FROM EMPLOYEE
+    JOIN DEPARTMENT ON ( DEPT_CODE = DEPT_ID)
+    JOIN LOCATION ON ( LOCATION_ID = LOCAL_CODE);
+
+
+
 --SUBQUERY 문제
 --서브    쿼리(SUBQUERY) :  메인    쿼리를    위해    보조    역할을    하는    쿼리이며,  쿼리    안에    쿼리가    포 함되어   있음.
 --1. 첫    번째   구문과    두    번째    구문    합쳐주셈.
