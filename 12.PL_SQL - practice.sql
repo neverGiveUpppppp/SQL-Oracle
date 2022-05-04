@@ -145,6 +145,16 @@ EMPLOYEE 테이블에서 사번, 이름, 직급코드, 부서코드, 급여를 조회하고
 단, 입력받은 이름과 일치하는 조건의 직원을 조회하세요.                               
 */
 
+DECLARE
+    
+BEGIN
+    SELECT EMP_ID, EMP_NAME, DEPT_CODE, JOB_CODE, SALARY
+    INTO EI, EN,DC,JC,SAL
+    FROM EMPLOYEE
+    
+END;
+/
+
 DECLARE 
     EMP_ID EMPLOYEE.EMP_ID%TYPE;
     EMP_NAME EMPLOYEE.EMP_NAME%TYPE;

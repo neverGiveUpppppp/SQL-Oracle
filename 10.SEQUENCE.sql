@@ -23,10 +23,47 @@ CREATE SEQUENCE 시퀸스명
 시퀸스 삭제 : DROP SEQUENCE 시퀸스명;
 시퀸스 전체 리스트 조회 : SELECT * FROM USER_SEQUENCES;
 
+*/
+
+-- SEQUENCE 생성
+CREATE SEQUENCE SEQ_1ST -- 여기 첫줄 제외하면 전부 생략가능
+START WITH 1        -- 생략시 기본값 : 1
+INCREMENT BY 1      -- 생략시 기본값 : 1
+MAXVALUE 5          -- 생략시 기본값 : 10의 27제곱
+MINVALUE 1          -- 생략시 기본값 : 
+CYCLE               -- 생략시 기본값 : NOCYCLE
+NOCACHE;            -- 생략시 기본값 : NOCACHE
+
+CREATE SEQUENCE SEQ_2ND -- 생략 버젼
+MAXVALUE 10             
+CYCLE              
+NOCACHE;
+
+-- SEQUENCE 사용
+-- 시퀸스명.NEXTVAL 시작,다음증가값 실행 // 시퀸스명.CURRVAL : 현재 시퀸스값
+INSERT INTO UC VALUES(SEQ_1ST.NEXTVAL,'A','AA','남',DEFAULT);
+-- 값이 있더라도 NEXTVAL이 실행 될때마다 값이 증가해서 이미 있던 2번의 에러 뒤에 3번값이 추가됨
+INSERT INTO UC VALUES(SEQ_1ST.NEXTVAL,'B','BB','남',DEFAULT);
+INSERT INTO UC VALUES(SEQ_1ST.NEXTVAL,'C','CC','남',DEFAULT); 
+-- SEQ_1ST.NEXTVAL가 3번 실행되어 현재 3
+
+-- SEQUENCE 수정
+-- START WITH 시작값 수정 불가
+ALTER SEQUENCE SEQ_1ST
+INCREMENT BY 2
+MAXVALUE 10;
+
+-- SEQUENCE 삭제
+DROP SEQUENCE SEQ_1ST;
+
+-- SEQUENCE 전체 리스트 조회
+SELECT * FROM USER_SEQUENCES; -- 끝에 S 기억
+
+
 
 ------------------------------------------------------------------------------
 
-
+/*
 
 -- < SEQUENCE >
 자동 번호 발생기

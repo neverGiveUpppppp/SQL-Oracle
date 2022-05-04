@@ -23,6 +23,8 @@ INSERT(데이터 삽입), UPDATE(데이터 수정),DELETE(데이터 삭제),SELECT(DQL)
 
 원래 인서트 뒤에 ()가 들어가야함 . 컬럼 지정
 
+INSERT INTO 테이블명(컬럼명) VALUSE();
+
 */
 
 -- INSERT : 컬럼명 모두 지정
@@ -340,6 +342,7 @@ COMMIT;
 -- DELETE로 삭제한거는 롤백으로 복원 가능
 -- TRUNCATE는 롤백으로 복원 불가능
 
+-- DELETE FROM 테이블명 [WHERE 컬럼명 = ? ;]
 SELECT * FROM EMLOYEE;
 
 DELETE FROM EMPLOYEE;

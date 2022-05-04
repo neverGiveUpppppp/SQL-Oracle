@@ -1,24 +1,9 @@
 
 ------------------------------------------------------------------------------
--------------------------------DDL--------------------------------------------
-------------------------------------------------------------------------------
+-------------------------------DDL------------------------------------------
+--------------------------------------------------------------------
 /*
-
-DDL(Date Definition language)
-데이터 정의어  - CREATE, ALTER, DROP
-
-데이터베이스를 정의하는 언어이며, 데이터리를 생성, 수정, 삭제하는 등의 
-데이터의 전체의 골격을 결정하는 역할을 하는 언어
-
-------------------------------------------------------------------------------
-
-DDL(Date Definition language) : 데이터 정의어  - CREATE, ALTER, DROP
-DML (Data Manipulation Language) :  데이터 조작어 - INSERT, UPDATE,DELETE,SELECT(DQL)
-TCL(Transaction Ccontrol Language) : 트랜잭션 제어 - COMMIT, ROLLBACK
-
-------------------------------------------------------------------------------
-
-CREATE
+CREATE`
 
 1.테이블 만들기
 
@@ -80,7 +65,6 @@ COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '회원 네임'; -- 덮어씀
 
 
 -- CMD에서 작성한 테이블 확인 방법
--- 작성한 전체 테이블 확인 코드 3가지
 -- 방법1
 SELECT * FROM USER_TABLES; -- 사용자가 작성한 테이블을 확인하는 뷰
 -- 방법2
@@ -111,8 +95,8 @@ DESC MEMBER;
 
 
 */
--- 사용자가 작성한 제약조건 확인 뷰 2가지
-DESC USER_CONSTRAINTS; 
+
+DESC USER_CONSTRAINTS; -- 사용자가 작성한 제약조건 확인 뷰
 
 SELECT * FROM USER_CONSTRAINTS;
 
@@ -352,8 +336,6 @@ INSERT INTO USER_PRIMARYKEY2 VALUES(2, 'user02', 'pass01', '강건강','남','010-11
 -- FOREIGN KEY 
 -- 참조
 -- 외부 테이블에서 참조해 온 컬럼. 이 컬럼값이 존재하면 허용
---FOREIGN KEY제약조건은 기본키를 참조하는 컬럼을 작성할 때 사용하는 제약조건으로, 
--- 외래키를 가지는 컬럼의 데이터 형은 외래키가 참조하는 기본키의 컬럼과 데이터형과 일치해야 한다.
 -- 테이블 레벨, 컬럼 레벨 둘 다 설정가능
 
 -- 부모테이블 : 참조 당하는 테이블
@@ -530,7 +512,7 @@ WHERE GRADE_CODE = 10;
 
 -- CHECK
 -- 
--- 데이터 값의 범위나 조건을 지정해 설정한 값만 허용
+-- 
 
 CREATE TABLE USER_CHECK(
     USER_NO NUMBER PRIMARY KEY,
@@ -644,20 +626,7 @@ FROM EMPLOYEE
 SELECT * FROM EMPLOYE_COPY2;
 
 
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
 
--- ALTER
--- 테이블 수정
--- 테이블 생성 후 제약조건 뒤에 추가 가능
-
-/*
-ADD UNIQUE(컬럼명);
-ADD PRIMARY KEY(컬럼명);
-ADD FOREIGN KEY(참조받을 자식테이블 컬럼명) REFERENCE**S** 부모테이블명(참조할 컬럼명);
-MODIFY 컬럼명 NOT NULL;
-
-*/
 
 -- 이미 테이블 만든거에 제약조건 뒤에 추가 가능
 -- 삭제 후 재생성인 아닌 추가기능
@@ -679,6 +648,7 @@ ALTER TABLE USER_GRADE4 ADD CONSTRAINT UG4_GC_PK PRIMARY KEY(GRADE_CODE);
 
 
 
+------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 
@@ -715,13 +685,10 @@ COMMIT;
 -- 참조 테이블은 LOCATION, 참조 컬럼은 LOCATION의 기본키
 
 
-ALTER TABLE DEPARTMENT ADD FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION;
-ALTER TABLE DEPARTMENT ADD FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION(LOCAL_CODE);
--- 둘 다 정답
 
+ALTER TABLE DEPARTMENT ADD FOREIGN KEY(LOCATION_ID) REFERENCES LOCATION;
 
 ROLLBACK;
-
 
 
 ------------------------------------------------------------------------------

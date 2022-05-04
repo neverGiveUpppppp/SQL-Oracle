@@ -262,12 +262,18 @@ GROUP BY DEPT_CODE, SALARY -- 샐러리도 추가 그룹핑. 없을 때랑 결과값이 나오는 로
 HAVING AVG(SALARY) >= 3000000;
 
 
--- 부서 별 급여 합계 중 900000을 초과하는 부서코드와 급여 합계 조회
+-- 부서 별 급여 합계 중 9000000을 초과하는 부서코드와 급여 합계 조회
 -- 모범 답안
 SELECT DEPT_CODE, SUM(SALARY) -- 부서코드와 급여 합계 조회라 셀렉트로 조회할 항목 2개
 FROM EMPLOYEE
 GROUP BY DEPT_CODE      -- 어떨 때 그룹을 복수로 나누지?
-HAVING SUM(SALARY) > 900000
+HAVING SUM(SALARY) > 9000000
+ORDER BY DEPT_CODE;
+
+--EMPLOYEE테이블에서 각 부서코드마다 직급코드 별 급여 합, 부서 별 급여 합, 총합 조회
+SELECT DEPT_CODE, JOB_CODE, SUM(SALARY)
+FROM EMPLOYEE
+GROUP BY DEPT_CODE, JOB_CODE
 ORDER BY DEPT_CODE;
 
 
@@ -427,7 +433,7 @@ WHERE SALARY > 3000000;
 -- DEPT코드가 D5이면서 연봉이 3000000초과인 사람을 도출하는 코드
 
 -- UNINON ALL
--- 
+-- AND조건 + OR조건(중복된 행 추가조회)
 SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
 FROM EMPLOYEE
 WHERE DEPT_CODE = 'D5'

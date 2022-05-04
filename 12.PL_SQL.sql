@@ -650,6 +650,7 @@ BEGIN
     END LOOP;
 END;
 /
+
 -- 짝수 단 출력
 
 
@@ -660,6 +661,7 @@ COMMIT;
 ------------------------------------------------------------------------------
 
 -- 예외 처리(EXCEPTION)
+-- 예외 메세지
 -- NO_DATA_FOUND : SELECT문이 데이터 행을 반환하지 못할 때
 -- DUP_VAL_ON_INDEX : UNIQUE 제약조건이 들어간 컬럼에 중복 값이 들어갔을 때
 --                      DUPLICATE VALUE ON INDEX
