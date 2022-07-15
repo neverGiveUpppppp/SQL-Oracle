@@ -1,0 +1,323 @@
+@import "reset.css";    
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+
+
+
+/*
+
+세팅태그 = normailize = reset
+    원래 가지고 있는 값을 무효화    
+
+이미지는 저장받아서 써라    
+    따올 때 서버에 올려놓은 이미지 쓰지말고 다운받아서 자기꺼 넣어줘서 써라
+
+
+object-fit
+ display: flex;
+    justify-content: center; 가로 정렬
+    justify-content: space-between; 빈공간 만들기
+    align-items: center; 세로 정렬
+
+    flex-basis: 35%;
+    flex-wrap: wrap;
+    flex-wrap: none;
+    gap: 20px; 틈
+
+
+.img_cut{ width: 100%; height: 100%; object-fit: cover; margin: auto; }
+
+.carousel-inner{
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 400px;
+}
+
+#carouselExampleIndicators{
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 400px;
+    /* max-height: 400px;
+}
+
+*/
+
+/*
+.cardContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.cardContainer > div {
+    flex-basis: 49%;
+    height: 300px;
+}
+
+.cardContainer .cardBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #ccc;
+    /flex-wrap: nowrap; 
+}
+
+
+.cardContainer .cardBox > div {
+    flex-basis: 90%;  플렉스 아이템의 초기 크기 지정. box-sizing을 따로 지정하지 않는다면 콘텐츠 박스의 크기를 변경
+     height: 250px; 
+}
+
+
+
+.cardBoxText{
+     white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+*/
+
+.article .articleSubTitle {
+    display: flex;
+    justify-content: space-between;  /* 스페이스 비트윈 쓰면, flex-basis를 쓰고 남은 영역을 사이 여백으로 준다  */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 2% 2%; /* 상하 좌우 : 좌우 각각 2%씩 주는 것*/
+    /* padding: 0 0 0 0 상 우 하 좌 */
+    /* padding: 0 0 0 상 좌우 하 */
+    /* padding: 5px 하나면 사방향 */
+    /* 패딩, 마진 둘 다 적용되는 것 */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+/* 패딩, 마진 2% 위에서 제외된 96%의 크기를 다시 100%로 환산되서 다시 65/35% 나누는 것 */
+.article .articleSubTitle .articleMainTop {
+    flex-basis: 60%;
+}
+
+/* <p>블록요소로 세팅한 css */
+/* 
+.article .reviewDateTie {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: none;
+    width: 20%;
+} 
+
+
+.article .articleSubTitle .img {
+    flex-basis: 35%;
+}
+
+.articleMainBotton p{
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    /* border-style: double;
+    min-height: 20rem;
+    padding: 2% 2%;
+}
+
+
+*/
+/*********************************************************************************/
+
+html, body {
+    box-sizing: border-box;
+}
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+}
+
+.main{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    font-family:'Noto Sans KR', sans-serif;
+    
+}
+
+.main .infoContainer {
+    flex-basis: 80%;
+    height: 800px;
+    background-color: white;
+    
+}
+.infoContainer  table{
+    margin: 0 auto;
+} 
+
+.titleArea{
+    display: flex;
+    /* justify-content: center; */
+    gap: 3%; 
+    align-items: center;
+    padding: 2% 11%;
+    width:820px;
+    margin: 0 auto;
+}
+.titleArea > div{
+    margin: 0 auto;
+}
+.titleArea > h3{
+    font-size: 22px; font-weight: 500;
+}
+.titleArea > span{
+    font-size: 13px; color:rgb(135, 133, 133);
+}
+
+.boardSearchBox {
+    /* justify-content의 letf,right,center 위치 외에 세부조정하고 싶으면,
+     justify-content: space-between으로 공백을 줘서 조정하면 됨*/
+    display: flex;
+    justify-content: space-between; /* space-between의 디폴트 범위지정값은 나머지 텍스트나 범위를 제외한 전부를 먼저 준다 */
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #FCD2D1;
+    width:770px;
+    margin: 0 auto;
+}
+
+.boardSearchBox > div {
+    display: flex;
+    gap: 10px;
+}
+.boardSearchBox span {
+    font-size: x-small;
+    padding-top: 5px;
+    align-content: center;
+    vertical-align: middle;
+}
+
+.boardSearchBox > div > ul {
+    display: flex;
+    /* justify-content: space-between;  */
+    list-style: none;
+    gap: 10px;
+    font-size: smaller;
+}
+.boardSearchBox > div.searchBar{
+    /* boardSearchBox 아래있는 div태그 중에 이름이 searchBar인 태그에만 적용 */
+    display: flex;
+    gap : 0px;
+
+    
+}
+/* 
+.boardSearchBox > div .searchBar
+boardSearchBox 아래있는 div태그 자식 요소 중에 seachBar태그에만 적용  */
+
+.searchBar > input{
+    display: flex;
+    border: 1px solid lightgray;
+}
+
+thead tr{
+    width: 100%;
+    height: 2rem;
+        min-height: 20px;
+        max-height: 50px;
+    border-top: 2px solid rgb(254, 143, 143)  ;
+    border-bottom: 2px solid #FE8F8F  ;
+}
+thead th{
+    padding: 2% 1%;
+    vertical-align: middle;
+    text-align: center;
+    font-size: small;
+    font-weight: none;
+}
+tbody > tr{
+    height: 2rem;
+    /* border-top: 1px solid lightgray; */
+    border-bottom: 1px solid lightgray;
+    align-content: center;
+    vertical-align: middle;
+}
+tbody > tr > td{
+    height: 2rem;
+    font-size: small;
+    font-family: noto sans;
+    align-content: center;
+    vertical-align: middle;
+    letter-spacing: 0px;
+}
+tbody > tr > td.tbodyTd1{
+    width:50px;
+    text-align: center;
+}
+tbody > tr > td.tbodyTd2{
+    padding-left:10px; 
+    text-align:left; 
+    color:#999
+}
+tbody > tr > td.tbodyTd3{
+    width:100px;
+    text-align: center;
+}
+tbody > tr > td.tbodyTd4{
+    width:100px;
+    text-align: center;
+    color: gray;
+}
+tbody > tr > td.tbodyTd5{
+    width:100px;
+    text-align: center;
+    color: gray;
+}
+/* 위의 class tbodyTd1-5로 대체 */
+/* tbody td:nth-last-child(1){
+    color: gray;
+} 
+tbody td:nth-last-child(2){
+    color: gray;
+}  */
+/* 뒤에서부터 4번째가 tr태그면 적용  // 태그 우선 */
+
+
+
+
+
+
+/* 상속 선택자로 위에서 처리한 코드 */
+/* 
+.noticeTop{
+    width: 100%;
+    height: 2rem;
+        min-height: 25px;
+        max-height: 50px;
+    border-top: 2px solid #FE8F8F  ;
+    border-bottom: 2px solid #FE8F8F  ;
+}
+.noticeTop > th{
+    padding: 2% 1%;
+    vertical-align: middle;
+    text-align: center;
+} */
+
+/* 
+.noticeBottom{
+    width: 100%;
+    border-top: 2px solid #FE8F8F  ;
+    border-bottom: 2px solid #FE8F8F  ;
+}
+ */
+
+
+
+
+
+
+
+

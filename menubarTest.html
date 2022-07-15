@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TREND EATER</title>
+	<!-- UIkit CSS & JS -->
+	<link rel="stylesheet" href="uikit.css" />
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/js/uikit.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/js/uikit-icons.min.js"></script>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+	<style>
+		*{font-family: 'Gowun Dodum', sans-serif;}
+		body{position: relative; width: 100%}
+		.all{position: absolute; left: 15%; right: 15%;}
+		#logo{width: 200px; height: 100px; display:block; margin-left: auto; margin-right: auto;}
+		.uk-link-muted{font-size: small;}
+		#login{display: block; text-align: right;}
+
+	</style>
+</head>
+<body>
+
+	<div class="all">
+	
+		<div id="login">
+			<a class="uk-link-muted" href="#">로그인</a> <a class="uk-link-muted" href="#">│ 회원가입 </a>
+		</div>
+		<img src="logo.png" id="logo">
+
+		<nav class="uk-navbar-container" uk-navbar>
+	    <div class="uk-navbar-left">
+	        <ul class="uk-navbar-nav">
+	        	<li>
+	                <a href="#" style="font-family: 'Gowun Dodum', sans-serif;">전체 카테고리</a>
+	                <div class="uk-navbar-dropdown">
+	                    <ul class="uk-nav uk-navbar-dropdown-nav">
+	                        <li><a href="#">과자/간식</a></li>
+	                        <li><a href="#">유제품</a></li>
+	                        <li><a href="#">음료/커피/차</a></li>
+	                        <li><a href="#">냉장/냉동/반찬</a></li>
+	                        <li><a href="#">통조림/간편식</a></li>
+	                        <li><a href="#">소스/오일/분말</a></li>
+	                        <li><a href="#">건강식품</a></li>
+	                        <li><a href="#">프랜차이즈</a></li>
+	                        <li><a href="#">편의점</a></li>
+	                    </ul>
+	                </div>
+	            </li>
+	            <li><a href="#" style="font-family: 'Gowun Dodum', sans-serif;">리뷰</a></li>
+	            <li><a href="#" style="font-family: 'Gowun Dodum', sans-serif;">시식</a></li>
+	            <li><a href="#" style="font-family: 'Gowun Dodum', sans-serif;">이벤트</a></li>
+	        </ul>
+	    </div>
+
+	
+	    <div class="uk-navbar-right">
+	    	<div>
+				<form class="uk-search uk-search-default">
+					<span class="uk-search-icon-flip" uk-search-icon></span>
+					<input class="uk-search-input" type="search" placeholder="검색어를 입력하세요">
+				</form>
+			</div>
+	        <ul class="uk-navbar-nav">
+	            <li>
+	            	<a href="#" uk-icon="user"></a>
+	            	<div class="uk-navbar-dropdown">
+	                    <ul class="uk-nav uk-navbar-dropdown-nav">
+	                        <li><a href="#">마이페이지</a></li>
+	                        <li><a href="#">공지사항</a></li>
+	                        <li><a href="#">문의사항</a></li>
+	                    </ul>
+	                </div>
+	            </li>
+	            <li><a href="" uk-icon="heart"></a></li>
+	            <li><a href="" uk-icon="cart"></a></li>
+	        </ul>
+	    </div>
+	    </nav>
+	    
+
+	</div>
+	
+	
+
+</body>
+</html>

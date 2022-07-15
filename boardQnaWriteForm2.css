@@ -1,0 +1,91 @@
+@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css); 
+
+
+
+body{
+    font-family: "Noto Sans";
+}
+
+h2{
+    border-bottom: 2px solid black;
+    padding: 2%;
+}
+span{
+    width:100px;
+    padding-right: 30px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+
+
+.head{
+    width:1000px;
+    align-items: center;
+    margin-left: 10px;
+    margin: 0 auto;
+    
+}
+
+.main{
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+
+}
+.QuesType{
+    display: flex;
+    padding:1% 0;
+}
+.innerQuesType{
+    display: flex;  
+}
+.innerQuesTypeLeft{
+    width:100px;
+    text-align: center;
+    padding: 0 13px;
+}
+
+.QuesTitle{
+    display: flex;
+    padding:1% 0;
+}
+.QuesTitle > input{
+    width:890px;
+}
+
+.QuesContent{
+    display: flex;
+    height:500px;
+    padding:1% 0;
+    word-break: normal;
+}
+.QuesContent > textarea{
+    width:890px;
+    padding:1% 0;
+}
+
+
+.submitButton{
+    width:1000px;
+    text-align: center;
+    margin:2% auto;
+    padding-left: 6%;
+    
+}
+.submitButton > button{
+    width:150px;
+    height:35px;
+    background-color: #FE8F8F;
+    border: 1px solid #FF5C58;
+    color:#fff;
+}
+
+/**********
+1.보드라이트폼 전체 가운데 정렬
+2.유형,제목,내용 정렬
+
+
+********/
+

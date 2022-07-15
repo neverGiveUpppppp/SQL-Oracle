@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- fontawesome : 아이콘  -->
+    <style>
+        /* reset.css 대해서 찾아보고, 적용해보기! */
+        html, body {
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+            
+        .main .csCenterContainer {
+            flex-basis: 20%;
+            height: 800px;
+            background-color: pink;
+        }
+
+        .main .infoContainer {
+            flex-basis: 80%;
+            height: 800px;
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- <div class="header">
+            <div class="userMenu">
+                <ul>
+                    <li><a href="#">회원가입</a></li>
+                    <li><a href="#">로그인</a></li>
+                    <li><a href="#">고객센터</a></li>
+                </ul>                
+            </div>
+            // h1은 보통 로고를 넣을 때 사용 
+            <h1><img src="" alt="logo"></h1>
+            <div class="menuBox">
+                <div></div>
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+        </div> -->
+
+        <div class="main">
+            <div class="csCenterContainer" >
+                <h3>고객센터</h3>
+                <ul>
+                    <li>1111111</li>
+                    <li>2222222</li>
+                    <li>3333333</li>
+                    <li>4444444</li>
+                    <li>5555555555</li>
+                    <li>666</li>
+                </ul>
+                <div class="helpBtn">
+                    <span>도움이 필요하신가요?</span>
+                    <span>1:1 채팅</span>
+                </div>
+            </div>
+            <div class="infoContainer">
+                <div class="titleArea">
+                    <h3>공지사항</h3>
+                    <span>컬리의 새로운 소식 어쩌구</span>
+                </div>
+                <!-- 테이블로 게시판 만들기!! -->
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>제목</th>
+                                <th>작성자</th>
+                                <th>작성일</th>
+                                <th>조회</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td width="50" nowrap="" align="center">공지 </td>        
+                                <td style="padding-left:10px; text-align:left; color:#999">
+                                    <a href="view.php?id=notice&amp;no=1591"><b>[마켓컬리] KURLY BIRTH WEEK 럭키기프트` 이벤트 당첨 안내</b></a><b></b></td>
+                                <td width="100" nowrap="" align="center"> MarketKurly </td>
+                                <td width="100" nowrap="" align="center" class="eng2">2022-05-23</td>
+                                <td width="30" nowrap="" align="center" class="eng2">7629</td>
+                            </tr>
+                            <tr>
+                                <td width="50" nowrap="" align="center">공지 </td>
+                                    <td style="padding-left:10px; text-align:left; color:#999">
+                                        <a href="view.php?id=notice&amp;no=64"><b>마켓컬리 배송 안내</b></a><b></b></td>
+                                    <td width="100" nowrap="" align="center">MarketKurly </td>
+                                    <td width="100" nowrap="" align="center" class="eng2">2016-01-08</td>
+                                    <td width="30" nowrap="" align="center" class="eng2">3172001</td>
+                            </tr>
+                            
+
+                            <tr>
+                                <td width="50" nowrap="" align="center">공지 </td>
+                                <td style="padding-left:10px; text-align:left; color:#999">
+                                    <a href="view.php?id=notice&amp;no=931"><b>[마켓컬리] 포장재 회수 서비스 안내</b></a><b></b></td>
+                                <td width="100" nowrap="" align="center">MarketKurly </td>
+                                <td width="100" nowrap="" align="center" class="eng2">2021-06-18</td>
+                                <td width="30" nowrap="" align="center" class="eng2">49299</td>
+                            </tr>
+                            <tr>
+                                <td width="50" nowrap="" align="center">1441 </td>
+                                <td style="padding-left:10px; text-align:left; color:#999">
+                                    <a href="view.php?id=notice&amp;no=1641">[가격인상공지] [옥소] 굿그립 3종 핸드 스파이럴라이저 외 38건 (2022 6. 16 ~)</a></td>
+                                <td width="100" nowrap="" align="center">MarketKurly </td>
+                                <td width="100" nowrap="" align="center" class="eng2">2022-06-10</td>
+                                <td width="30" nowrap="" align="center" class="eng2">46</td>
+                            </tr>
+                            <tr>
+                                <td width="50" nowrap="" align="center">1440 </td>
+                                <td style="padding-left:10px; text-align:left; color:#999">
+                                    <a href="view.php?id=notice&amp;no=1640">[가격인상공지] [연세우유 x 마켓컬리] 전용목장우유 900mL (2022 6. 18 ~)</a></td>
+                                <td width="100" nowrap="" align="center">MarketKurly </td>
+                                <td width="100" nowrap="" align="center" class="eng2">2022-06-10</td>
+                                <td width="30" nowrap="" align="center" class="eng2">53</td>
+                            </tr>
+                            <tr>
+                                <td width="50" nowrap="" align="center">  1439 </td>
+                                <td style="padding-left:10px; text-align:left; color:#999">
+                                  <a href="view.php?id=notice&amp;no=1639">[가격인상공지] [제스파] 듀얼맥스태핑 발안마기 ZP1063 (2022 6. 15 ~)</a></td>
+                                <td width="100" nowrap="" align="center">MarketKurly </td>
+                                <td width="100" nowrap="" align="center" class="eng2">2022-06-10</td>
+                                <td width="30" nowrap="" align="center" class="eng2">33</td>
+                            </tr>
+
+                        </tbody>
+
+
+
+                    </table>
+                </div>
+                <div class="boardSearchBox">
+                    <ul>
+                        <li>이름</li>
+                        <li>제목</li>
+                        <li>내용</li>
+                    </ul>
+                    <input type="search">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+
+        </div>
+    </div>
+</body>
+</html>

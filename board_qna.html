@@ -1,0 +1,266 @@
+<!-- 
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> 
+<%@ page import="com.fpj.trendeater.board.model.vo.Board" %> -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> TREND_EATER QnA </title>
+
+
+
+<!-- UIkit CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/js/uikit-icons.min.js"></script>
+
+
+<script src="${ pageContext.servletContext.contextPath }/resources/js/jquery-3.6.0.min.js"></script> 
+
+<!-- font awesome -->
+<script src="https://kit.fontawesome.com/76295929c4.js" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+
+
+<link rel="stylesheet" type="text/css" href="board_qna.css">
+<!-- <link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/resources/css/board_qna.css"> -->
+  
+
+
+</head>
+    
+<body>
+
+<div class="container">
+
+<!-- 헤더푸터는 클래스명 신경써야함
+다른 페이지 임포트 되는거에는 css 선택자 적용안됨
+메인 : 페이지가 달라지는거니 상관없다 -->
+
+    <div class="main">
+        <div class="infoContainer">
+            <div class="titleArea">
+                <h3 > 1:1 문의 </h3>
+            </div>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>제목</th>
+                            <!-- <th>작성자</th> 삭제 요망 -->
+                            <th>작성일</th>
+                            <th>답변상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <!-- <c:forEach var="b" items="${ list }">
+                              
+                                    <tr class="tbodyContent">
+                                        <td class="tbodyTd1" width="65">${ qna.QnANo } </td>
+                                        <td class="tbodyTd2" style="text-align:left">${ qna.QnATitle }</td>
+                                        <td class="tbodyTd4" width="100">${ qna.QnACreateDate }</td>
+                                        <td class="tbodyTd5" width="50">${ qna.QnAAnsStatus }</td>
+                                    </tr>
+                                    <tr class="tbodyContent">
+                                        <td class="tbodyTd1" width="65">${ qna.QnANo } </td>
+                                        <td class="tbodyTd2" style="text-align:left">${ qna.QnATitle }</td>
+                                        <td class="tbodyTd4" width="100">${ qna.QnACreateDate }</td>
+                                        <td class="tbodyTd5" width="50">${ qna.QnAAnsStatus }</td>
+                                    </tr>
+                            
+                        </c:forEach> -->
+
+                       
+                        <!-- <details>
+                            <summary> 
+                                    <div>a
+                                        <table>
+                                            <tr>
+                                                <td>1</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                            </summary>
+                            <div>
+                                <ul>
+                                    <li>주문/결제/반품/교환문의 > 기타(직접입력)</li>
+                                    <li>
+                                        Q의 아이콘 : 내용
+                                    </li>
+                                    <li>
+                                        <br>
+                                        <button type="submit">수정</button>
+                                        <button type="submit">삭제</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </details>   -->
+
+                            
+
+                            <!-- <details>
+                                <summary>${ qna.QnATitle }</summary>
+                                <div>
+                                    <ul>
+                                        <li>주문/결제/반품/교환문의 > 기타(직접입력)</li>
+                                        <li>
+                                            Q의 아이콘 : 내용
+                                        </li>
+                                        <li>
+                                            <button type="submit">수정</button>
+                                            <button type="submit">삭제</button>
+                                        </li>
+                                    </ul>
+                                </div> -->
+
+                        <!-- 더미 데이터 -->
+                        <!-- <tr class="tbodyContent">
+                            <td class="tbodyTd1" width="65">${ qna.QnANo } </td>        
+                            <td class="tbodyTd2" style="text-align:left">${ qna.QnATitle }</td>
+                                <td class="tbodyTd2" style="text-align:left">
+                                <details>
+                                    <summary>${ qna.QnATitle }</summary>
+                                    <div>
+                                        <ul>
+                                            <li>주문/결제/반품/교환문의 > 기타(직접입력)</li>
+                                            <li>
+                                                Q의 아이콘 : 내용
+                                            </li>
+                                            <li>
+                                                <button type="submit">수정</button>
+                                                <button type="submit">삭제</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </details>
+                            </td>
+                            <td class="tbodyTd4" width="100">${ qna.QnACreateDate }</td>
+                            <td class="tbodyTd5" width="50">${ qna.QnAAnsStatus }</td>
+                        </tr> -->
+<!--                         
+                        <div>
+                            <tr class="uk-button uk-button-default" type="button" uk-toggle="target: #toggle-usage">
+                                <td class="tbodyTd1" width="65">${ qna.QnANo } </td>        
+                                <td class="tbodyTd2" style="text-align:left">${ qna.QnATitle } </td>
+                                <td class="tbodyTd4" width="100">${ qna.QnACreateDate }</td>
+                                <td class="tbodyTd5" width="50">${ qna.QnAAnsStatus }</td>
+                            </tr>
+                            <tr id="toggle-usage">
+                                dkjdskljflkdsjfl
+                            </tr>
+                            <tr class="uk-button uk-button-default" type="button" uk-toggle="target: #toggle-usage1">
+                                <td class="tbodyTd1" width="65">${ qna.QnANo } </td>        
+                                <td class="tbodyTd2" style="text-align:left">${ qna.QnATitle } </td>
+                                <td class="tbodyTd4" width="100">${ qna.QnACreateDate }</td>
+                                <td class="tbodyTd5" width="50">${ qna.QnAAnsStatus }</td>
+                            </tr>
+                            <tr id="toggle-usage1">
+                                dkjdskljflkdsjfl
+                            </tr>
+                        </div>     -->
+
+
+                       
+
+                    </tbody>
+                        
+                   
+
+                </table>
+
+                <br>
+            </div>
+            
+            <c:forEach var="b" items="${ list }">
+            <details>
+                <summary> 
+                        <div>
+                            <table>
+                                <tr class="tbodyContent">
+                                    <td class="tbodyTd1" width="65">${ qna.QnANo } </td>
+                                    <td class="tbodyTd2" style="text-align:left">${ qna.QnATitle }</td>
+                                    <td class="tbodyTd4" width="100">${ qna.QnACreateDate }</td>
+                                    <td class="tbodyTd5" width="50">${ qna.QnAAnsStatus }</td>
+                                </tr>   
+                            </table>
+                        </div>
+                </summary>
+                <div class="QnaToggleOpen">
+                    <ul>
+                        <div class="QnaToggleContent">
+                        <li>
+                            <div>
+                                <img src="img/icons/icons_board_qna_q-solid.svg" style="width: 15px;">
+                                <p> 
+                                    { qna.Content} 
+                                    Q의 아이콘 : 질문 내용
+                                </p>
+                            </div><br>
+                            <div>
+                                <!-- 답변 상태 qna.QnAAnsStatus가 Y이면 A아이콘이 나타나는 c:if 사용 -->
+                                <img src="img/icons/icons_board_qna_a-solid.svg" style="width: 15px;">
+                                <i class="fa-solid fa-circle-a fa-fw"></i> A의 아이콘 : 답변 내용
+                            </div>
+                        </li>
+                        <br>
+                        </div>  
+                    </ul>
+                    <div class="QnaToggleOpen_Button">
+                        <button type="submit">수정</button>
+                        <button type="submit">삭제</button>
+                    </div><br>
+                </div>
+            </details>  
+
+
+
+            
+            <br>
+            
+
+            <br>
+            <div class="submitButton">
+                <button type="submit">문의하기</button>
+            </div>
+        
+
+            <br>
+            <div class="boardSearchBox">
+                <div>
+                    <span>검색어</span>
+                    <ul>
+                        <li><label><input type="checkbox">제목</label></li>
+                        <li><label><input type="checkbox">내용</label></li>
+                    </ul>
+                </div>
+                <div class="searchBar">
+                    <input type="search">
+                    <input type="image" name="submit">
+                </div>
+                <br>
+            </div>
+        </div>
+
+    
+    </div>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+

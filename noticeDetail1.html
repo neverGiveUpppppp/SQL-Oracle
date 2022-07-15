@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+<link rel="stylesheet" href="noticeDetail1.css" type="text/css">
+
+</head>
+<body>
+
+    <div class="title">
+        <h2>공지사항</h2>   
+        <p>TRENT EATER의 소식들과 유용한 정보들을 한곳에서 확인하세요.</p>
+    </div>    
+
+    <table class="tableWhole">
+            <thead>
+                <tr>
+                    <th>제목</th>
+                        <td style="width: 1050px;">${ b.boardTitle } [가격인상공지] [송월타월] 카운테스마라 클래스 1장 외 4건 (2022 6. 27 ~)</td>
+                </tr>
+                <tr>
+                    <th>작성자</th>
+                    <td>${b.nickName}</td>
+                </tr>
+                <tr>
+                    <th>작성일</th>
+                    <td>${b.boardCreateDate}</td>
+                    <th>조회수</th>
+                    <td>${b.boardCount}</td>
+                </tr>
+            </thead>
+    </table>
+    
+
+    <div class="content">
+        <p>
+        ${b.boardContent}
+        sdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgdssdfgdsfgdsfgdsfgsdfgdsfgds
+        </p>
+    </div>
+    <div class="listButton">
+        <button type="submit">목록</button>
+    </div>
+
+    
+
+</body>
+</html>
