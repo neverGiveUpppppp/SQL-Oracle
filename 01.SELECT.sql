@@ -132,6 +132,7 @@ FROM EMPLOYEE;
 -- 컬럼명  AS 별칭 / 컬럼명 AS “별칭” / 컬럼명 별칭 / 컬럼명 “별칭”
 쌍따옴표( "" )를 무조건 붙여야하는 조건
 1)별칭에 특수문자가 들어갈 경우
+    - 언더바(_)는 특수문자로 취급하지 않는다
 2)별칭이 숫자로 시작할 경우
 쌍따옴표 = 더블 쿼테이션(” ”)
     EX) 직원 명 ←띄어쓰기 공백 특수문자라 “직원 명”으로 적어줘야한다
@@ -147,6 +148,8 @@ FROM EMPLOYEE;
 /*
 리터럴(literal)
 값 자체 ‘ ‘
+
+오라클에서 리터럴 값을 제외한 나머지는 대소문자를 구분하지 않는다.
 
 오라클에서는 문자,문자열,데이트 상관없이 다 싱글쿼테이션(’ ‘)으로 감싸준다
 데이터 타입에 상관없이 별칭(””) 외에는 다 싱글쿼테이션으로 감싼다
@@ -189,17 +192,22 @@ WHERE EMAIL LIKE 'BANG%';
 SELECT DISTINCT JOB_CODE
 FROM EMPLOYEE;
 
+SELECT JOB_CODE
+FROM EMPLOYEE;
+
 -- EMPLOYEE 테이블에서 직원의 부서 코드를 중복 없이 조회
 SELECT DISTINCT DEPT_CODE
 FROM EMPLOYEE;
 
 -- DISTINCT는 한번만 쓸 수 있다
+-- null값도 중복제거함
 --SELECT DISTINCT DEPT_CODE, DISTINCT DEPT_CODE - error
 --FROM EMPLOYEE;
 
-SELECT DISTINCT DEPT_CODE, DEPT_CODE
+SELECT DISTINCT DEPT_CODE, JOB_CODE
 FROM EMPLOYEE;
-
+-- 두 컬럼의 결과값의 교집합 값만 중복제거함
+-- ex) D9 J1 둘 다 같아야 중복 제거
 
 /*
 SELECT 컬럼명 -- 조회하고자 하는 컬럼명 기술
@@ -242,6 +250,11 @@ FROM EMPLOYEE
 WHERE DEPT_CODE != 'D9'; -- != //  ''이랑 대소문자 구별 주의
 WHERE DEPT_CODE ^= 'D9'; -- ^=
 WHERE DEPT_CODE <> 'D9'; -- <>
+
+-- 오라클에서의 아니다 부정 표시 3가지
+-- != 
+-- ^=
+-- <>
 
 -- EMPLOYEE 테이블에서 퇴사 여부가 N인 직원을 조회하고 근무 여부를 재직중으로 표시
 -- 사번,이름, 고용일, 근무여부 조회
